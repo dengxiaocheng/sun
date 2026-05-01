@@ -15,8 +15,6 @@
   const startBtn = document.getElementById('startBtn');
   const loadBtn = document.getElementById('loadBtn');
   const hud = document.getElementById('hud');
-  const portraitLock = document.getElementById('portraitLock');
-
   const barA = document.getElementById('barA');
   const barM = document.getElementById('barM');
   const barP = document.getElementById('barP');
@@ -702,46 +700,24 @@
   let imageCache = {};
   let rafId;
   let pressTimer;
-  let portraitLockTimer;
-  const PORTRAIT_LOCK_HINT_DURATION_MS = 2200;
-
   function resolveImagePath(path) {
     return `assets/images/${path}`;
   }
 
   function isPortraitLayout() {
-    const media = window.matchMedia('(orientation: portrait)').matches;
-    const geometry = window.innerHeight >= window.innerWidth;
-    return media || geometry;
+    return true;
   }
 
   function isMobileTouchPointerLayout() {
-    return window.matchMedia('(pointer: coarse)').matches
-      || window.matchMedia('(hover: none)').matches
-      || window.TouchEvent !== undefined
-      || 'ontouchstart' in window
-      || (navigator && navigator.maxTouchPoints > 0);
+    return false;
   }
 
   function hidePortraitLock() {
-    if (portraitLockTimer) {
-      clearTimeout(portraitLockTimer);
-      portraitLockTimer = null;
-    }
-    portraitLock.classList.remove('open');
-    portraitLock.setAttribute('aria-hidden', 'true');
-    portraitLock.setAttribute('inert', '');
+    return;
   }
 
   function showPortraitLockHint() {
     hidePortraitLock();
-    portraitLock.classList.add('open');
-    portraitLock.removeAttribute('inert');
-    portraitLock.setAttribute('aria-hidden', 'false');
-
-    portraitLockTimer = setTimeout(() => {
-      hidePortraitLock();
-    }, PORTRAIT_LOCK_HINT_DURATION_MS);
   }
 
   function enterPlayMode() {
@@ -749,8 +725,6 @@
     titleScreen.setAttribute('aria-hidden', 'true');
     titleScreen.setAttribute('inert', '');
     titleScreen.style.pointerEvents = 'none';
-
-    hidePortraitLock();
   }
 
   function loadImage(path) {
@@ -1290,18 +1264,10 @@
   }
 
   function checkOrientation() {
-    const shouldShowPortraitHint = isMobileTouchPointerLayout() && !isPortraitLayout();
-
-    if (state.running || !shouldShowPortraitHint) {
-      hidePortraitLock();
-      return;
-    }
-
-    showPortraitLockHint();
+    return;
   }
 
-  window.addEventListener('orientationchange', checkOrientation);
-  window.addEventListener('resize', checkOrientation);
+  // 竖屏提示层移除后不再阻断方向提示；保留函数以兼容旧逻辑引用。
 
   function init() {
     preloadAll().catch(() => undefined);
@@ -1310,7 +1276,6 @@
     dialogText.textContent = '点击“开始”进入游戏。';
     speaker.textContent = '系统';
     hint.textContent = '';
-    checkOrientation();
   }
 
   function bindStartButton(button, handler) {

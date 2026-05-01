@@ -8,8 +8,8 @@
 
 当前发布版本使用缓存失效参数：
 
-- `style.css?v=sun-release-20260502`
-- `game.js?v=sun-release-20260502`
+- `style.css?v=sun-release-20260502-orient-off`
+- `game.js?v=sun-release-20260502-orient-off`
 
 - 本地启动（推荐）：
 
@@ -33,7 +33,6 @@ node assets/context/mobile-coarse-pointer-smoke.mjs
 
 回归点：
 
-- `请保持竖屏` 提示应仅在触控/粗指针场景且非竖屏时短时提示，且运行中不应出现。
 - 开始按钮点击后不应被任何覆盖层拦截，游戏画面应进入可交互状态。
 
 ## 发布与回归检查

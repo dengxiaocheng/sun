@@ -58,8 +58,7 @@ body {
   filter: saturate(1.05);
 }
 
-.screen,
-#portraitLock {
+.screen {
   position: absolute;
   inset: 0;
 }
@@ -71,8 +70,7 @@ body {
 #titleScreen.hidden,
 #hud.hidden,
 #systemPanel.hidden,
-#storagePanel.hidden,
-#portraitLock.hidden {
+#storagePanel.hidden {
   display: none !important;
   pointer-events: none !important;
 }
@@ -80,8 +78,7 @@ body {
 #titleScreen.hidden,
 #hud.hidden,
 #systemPanel.hidden,
-#storagePanel.hidden,
-#portraitLock.hidden {
+#storagePanel.hidden {
   visibility: hidden;
 }
 
@@ -228,8 +225,7 @@ button {
   border-radius: 999px;
 }
 
-.systemPanel,
-#portraitLock {
+.systemPanel {
   position: absolute;
   inset: 56px 10px auto 10px;
   z-index: 12;
@@ -241,8 +237,7 @@ button {
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
 }
 
-.systemPanel h3,
-#portraitLock .panel h2 {
+.systemPanel h3 {
   margin: 0 0 5px;
   color: #ffddc8;
 }
@@ -337,32 +332,6 @@ button {
 .choiceBtn:disabled {
   opacity: 0.45;
   background: #3a2f3a;
-}
-
-.modal {
-  display: none;
-  place-items: center;
-  pointer-events: none;
-}
-
-.modal.open {
-  display: grid;
-}
-
-#portraitLock {
-  pointer-events: none;
-}
-
-#portraitLock.open {
-  pointer-events: none;
-}
-
-#portraitLock .panel {
-  width: min(84%, 320px);
-  text-align: center;
-  padding: 14px;
-  background: var(--panel);
-  border-radius: 12px;
 }
 
 @keyframes fadeIn {
