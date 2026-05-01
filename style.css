@@ -193,6 +193,7 @@ button {
   display: flex;
   align-items: center;
   gap: 6px;
+  position: relative;
   font-size: 10px;
   color: var(--muted);
   background: var(--panel-soft);
@@ -201,10 +202,18 @@ button {
   line-height: 1;
 }
 
-.meter span {
-  width: 58px;
+.meterLabel {
+  width: 56px;
   flex: 0 0 auto;
   white-space: nowrap;
+}
+
+.meterValue {
+  min-width: 31px;
+  flex: 0 0 auto;
+  text-align: right;
+  color: #ffdfcc;
+  font-size: 9px;
 }
 
 .meter i {
@@ -212,9 +221,41 @@ button {
   display: block;
   height: 6px;
   flex: 1;
+  min-width: 44px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.12);
   overflow: hidden;
+}
+
+.meter i[data-delta] {
+  outline: 1px solid rgba(255, 214, 188, 0.6);
+  box-shadow: 0 0 10px rgba(255, 214, 188, 0.28);
+}
+
+.meter.changed {
+  color: #ffd9bf;
+}
+
+.meter.changed .meterValue {
+  color: #ffe9da;
+  font-weight: 600;
+}
+
+.meter.changed .meterDelta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.meterDelta {
+  flex: 0 0 auto;
+  width: 38px;
+  text-align: right;
+  font-size: 9px;
+  color: #ffdfc4;
+  min-height: 1em;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  transform: translateY(2px);
 }
 
 .meter i::after {
@@ -224,6 +265,15 @@ button {
   width: var(--v, 52%);
   background: linear-gradient(90deg, #f6d8bd, #d77f6f);
   border-radius: 999px;
+  transition: width 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
+}
+
+.meter.statusFlash i::after {
+  animation: barPulse 0.72s ease;
+}
+
+.meter.statusFlash i {
+  box-shadow: 0 0 8px rgba(252, 205, 184, 0.35);
 }
 
 .systemPanel {
@@ -381,11 +431,37 @@ button {
     padding: 3px 5px;
   }
 
-  .meter span {
+  .meterLabel {
     width: 52px;
+  }
+
+  .meterValue {
+    min-width: 28px;
+    font-size: 8.5px;
+  }
+
+  .meterDelta {
+    width: 34px;
+    font-size: 8px;
+  }
+
+  .meter i {
+    min-width: 32px;
   }
 
   #choiceArea:not(:empty) {
     margin-top: auto;
+  }
+}
+
+@keyframes barPulse {
+  0% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.22);
+  }
+  100% {
+    filter: brightness(1);
   }
 }

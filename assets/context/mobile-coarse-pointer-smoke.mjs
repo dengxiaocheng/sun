@@ -11,6 +11,8 @@ const files = {
   readme: fs.readFileSync(`${repoRoot}/README.md`, 'utf8'),
 };
 
+const hasIds = (target, ids) => ids.every((id) => new RegExp(`id=["']${id}["']`).test(target));
+
 const publicHtml = await (async () => {
   try {
     const response = await fetch('https://dengxiaocheng.github.io/sun/');
@@ -48,6 +50,24 @@ const drawDebugSlice = (() => {
   const end = files.js.indexOf('\n\n  function preloadScene', start);
   return files.js.slice(start, end > start ? end : files.js.length);
 })();
+const syncBarsSource = (() => {
+  const start = files.js.indexOf('function syncBars');
+  if (start < 0) return '';
+  const end = files.js.indexOf('\n\n  function', start + 1);
+  const fallbackEnd = files.js.indexOf('function preloadScene', start + 1);
+  const stop = end > start ? end : (fallbackEnd > start ? fallbackEnd : files.js.length);
+  return files.js.slice(start, stop);
+})();
+const normalizeDeltaSource = (() => {
+  const start = files.js.indexOf('function normalizeDelta');
+  if (start < 0) return '';
+  const end = files.js.indexOf('\n\n  function', start + 1);
+  const stop = end > start ? end : files.js.length;
+  return files.js.slice(start, stop);
+})();
+const statusBarHtmlIds = ['valueA', 'valueM', 'valueP', 'valueR', 'valueB', 'valueT', 'valueE'];
+const statusBarDeltaIds = ['deltaA', 'deltaM', 'deltaP', 'deltaR', 'deltaB', 'deltaT', 'deltaE'];
+const statusBarIds = ['barA', 'barM', 'barP', 'barR', 'barB', 'barT', 'barE'];
 const debugTupleTextPattern = /A:\s*\$\{state\.values\.A\}|M:\s*\$\{state\.values\.M\}|P:\s*\$\{state\.values\.P\}|R:\s*\$\{state\.values\.R\}|B:\s*\$\{state\.values\.B\}|T:\s*\$\{state\.values\.T\}|E:\s*\$\{state\.values\.E\}/;
 const chineseStatusLabels = ['焦虑雾', '动能', '复习进度', '恢复', '边界感', '关系温度', '理解/共情'];
 const hasChineseStatusLabels = (targetHtml) => chineseStatusLabels.every((label) => targetHtml.includes(label));
@@ -72,6 +92,14 @@ const expectedCacheVersion = releaseVersion || htmlCacheVersion || readmeCacheVe
 const hudFlexStartForMobileMatch = /@media\s*\(\s*max-width:\s*600px[^)]*\)\s*\{[\s\S]*?#hud\s*\{[\s\S]*?justify-content:\s*flex-start;[\s\S]*?\}/.test(files.css);
 const choiceAreaMarginTopAutoMatch = /@media\s*\(\s*max-width:\s*600px[^)]*\)\s*\{[\s\S]*?#choiceArea:not\(:empty\)\s*\{[\s\S]*?margin-top:\s*auto;[\s\S]*?\}/.test(files.css);
 const choiceAreaEmptyHiddenMatch = /#choiceArea:empty\s*\{[\s\S]*?display:\s*none;[\s\S]*?\}/.test(files.css);
+const hasSevenBarDom = hasIds(files.html, statusBarIds);
+const hasSevenValueDom = hasIds(files.html, statusBarHtmlIds);
+const hasSevenDeltaDom = hasIds(files.html, statusBarDeltaIds);
+const syncBarsUpdatesAllBars = /statusBars\.forEach/.test(syncBarsSource) && /--v/.test(syncBarsSource);
+const syncBarsUpdatesAllValues = /textContent\s*=\s*/.test(syncBarsSource) && /valueEl/.test(syncBarsSource);
+const hasVisibleChangeFeedback = /data-delta|changed|statusFlash/i.test(syncBarsSource);
+const normalizeTriggersSyncBars = /function normalizeDelta[\s\S]*?syncBars\(/.test(normalizeDeltaSource);
+const normalizeReturnsChange = /return\s+changed;/.test(normalizeDeltaSource);
 
 const checks = [
   { name: 'CSS/JS/README 版本参数可解析', pass: Boolean(htmlCacheVersion) && Boolean(readmeCacheVersion) },
@@ -128,6 +156,11 @@ const checks = [
   { name: '发布页不再有 portraitLock 关键字', pass: !/portraitLock/.test(publicHtml) && !/portraitLock/.test(files.css) },
   { name: 'release.version 与 index/query 一致', pass: releaseVersionFromFile && htmlCacheVersion === releaseVersionFromFile },
   { name: 'release.version 与 README 一致', pass: releaseVersionFromFile && readmeCacheVersion === releaseVersionFromFile },
+  { name: 'UI 有 7 条同源状态条 DOM', pass: hasSevenBarDom && hasSevenValueDom && hasSevenDeltaDom },
+  { name: 'syncBars 统一更新所有 7 条条宽度与 7 条数值文案', pass: syncBarsUpdatesAllBars && syncBarsUpdatesAllValues },
+  { name: '同步函数提供变化反馈状态（changed/statusFlash/data-delta）', pass: hasVisibleChangeFeedback },
+  { name: 'normalizeDelta 会触发条目刷新', pass: normalizeTriggersSyncBars },
+  { name: 'normalizeDelta 返回变化细目', pass: normalizeReturnsChange },
   { name: '#hud: justify-content:flex-start', pass: hudFlexStartForMobileMatch },
   { name: '#choiceArea:not(:empty) margin-top:auto', pass: choiceAreaMarginTopAutoMatch },
   { name: '#choiceArea:empty display:none', pass: choiceAreaEmptyHiddenMatch },

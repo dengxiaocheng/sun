@@ -22,6 +22,34 @@
   const barB = document.getElementById('barB');
   const barT = document.getElementById('barT');
   const barE = document.getElementById('barE');
+  const valueA = document.getElementById('valueA');
+  const valueM = document.getElementById('valueM');
+  const valueP = document.getElementById('valueP');
+  const valueR = document.getElementById('valueR');
+  const valueB = document.getElementById('valueB');
+  const valueT = document.getElementById('valueT');
+  const valueE = document.getElementById('valueE');
+  const deltaA = document.getElementById('deltaA');
+  const deltaM = document.getElementById('deltaM');
+  const deltaP = document.getElementById('deltaP');
+  const deltaR = document.getElementById('deltaR');
+  const deltaB = document.getElementById('deltaB');
+  const deltaT = document.getElementById('deltaT');
+  const deltaE = document.getElementById('deltaE');
+
+  const statusBars = [
+    { key: 'A', label: '焦虑雾', bar: barA, valueEl: valueA, deltaEl: deltaA },
+    { key: 'M', label: '动能', bar: barM, valueEl: valueM, deltaEl: deltaM },
+    { key: 'P', label: '复习进度', bar: barP, valueEl: valueP, deltaEl: deltaP },
+    { key: 'R', label: '恢复', bar: barR, valueEl: valueR, deltaEl: deltaR },
+    { key: 'B', label: '边界感', bar: barB, valueEl: valueB, deltaEl: deltaB },
+    { key: 'T', label: '关系温度', bar: barT, valueEl: valueT, deltaEl: deltaT },
+    { key: 'E', label: '理解/共情', bar: barE, valueEl: valueE, deltaEl: deltaE },
+  ];
+  const statusFlashTimers = {};
+  const STATUS_FLASH_MS = 800;
+
+  const STATUS_LABELS = new Set(statusBars.map((item) => item.key));
 
   const speaker = document.getElementById('speaker');
   const dialogText = document.getElementById('dialogText');
@@ -820,16 +848,29 @@
 
   function normalizeDelta(stateItem, delta) {
     if (!delta) return;
+    const changed = [];
     Object.entries(delta).forEach(([key, value]) => {
       if (key === 'badLoop') {
         state.badLoop = Math.max(0, (state.badLoop || 0) + value);
         return;
       }
       if (typeof value === 'number' && Object.prototype.hasOwnProperty.call(state.values, key)) {
-        state.values[key] = (state.values[key] || 0) + value;
+        const before = Number(state.values[key]) || 0;
+        const next = Math.max(0, Math.min(100, before + value));
+        const clamped = Math.round(next);
+        if (clamped !== before) {
+          changed.push({ key, delta: clamped - before, before });
+        }
+        state.values[key] = clamped;
       }
     });
     clampValues();
+    if (changed.length > 0) {
+      syncBars(changed);
+    } else {
+      syncBars();
+    }
+    return changed;
   }
 
   function getEnding() {
@@ -855,14 +896,55 @@
     return ENDINGS.stopMarch;
   }
 
-  function syncBars() {
-    if (barA) barA.style.setProperty('--v', `${state.values.A}%`);
-    if (barM) barM.style.setProperty('--v', `${state.values.M}%`);
-    if (barP) barP.style.setProperty('--v', `${state.values.P}%`);
-    if (barR) barR.style.setProperty('--v', `${state.values.R}%`);
-    if (barB) barB.style.setProperty('--v', `${state.values.B}%`);
-    if (barT) barT.style.setProperty('--v', `${state.values.T}%`);
-    if (barE) barE.style.setProperty('--v', `${state.values.E}%`);
+  function syncBars(changes = []) {
+    const deltaLookup = Object.create(null);
+    for (const item of changes || []) {
+      const { key, delta } = item;
+      if (key && STATUS_LABELS.has(key)) {
+        deltaLookup[key] = delta;
+      }
+    }
+
+    statusBars.forEach((item) => {
+      const { key, bar, valueEl, deltaEl } = item;
+      if (!bar) return;
+
+      const meter = bar.parentElement;
+      const value = Math.round(Number(state.values[key] || 0));
+      bar.style.setProperty('--v', `${value}%`);
+      if (valueEl) {
+        valueEl.textContent = `${value}%`;
+      }
+
+      const hasDeltaForKey = Object.prototype.hasOwnProperty.call(deltaLookup, key);
+      const delta = Number.isFinite(deltaLookup[key]) ? deltaLookup[key] : 0;
+      if (!hasDeltaForKey || !delta || !deltaEl || !meter) {
+        if (!statusFlashTimers[key]) {
+          if (deltaEl) deltaEl.textContent = '';
+          bar.removeAttribute('data-delta');
+          meter.classList.remove('changed', 'statusFlash');
+        }
+        return;
+      }
+
+      const deltaText = delta > 0 ? `+${delta}` : `${delta}`;
+      bar.setAttribute('data-delta', deltaText);
+      deltaEl.textContent = `${deltaText}%`;
+      meter.classList.add('changed', 'statusFlash');
+
+      if (statusFlashTimers[key]) {
+        clearTimeout(statusFlashTimers[key]);
+      }
+      statusFlashTimers[key] = window.setTimeout(() => {
+        meter.classList.remove('statusFlash');
+        meter.classList.remove('changed');
+        bar.removeAttribute('data-delta');
+        if (deltaEl) {
+          deltaEl.textContent = '';
+        }
+        statusFlashTimers[key] = 0;
+      }, STATUS_FLASH_MS);
+    });
   }
 
   function applySceneIntro(scene) {

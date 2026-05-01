@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>雾线下的译者</title>
-    <link rel="stylesheet" href="./style.css?v=sun-release-20260502-unify-seven-bars" />
+    <link rel="stylesheet" href="./style.css?v=sun-release-20260502-rework-bars-feedback" />
   </head>
   <body>
     <main id="wrap">
@@ -28,13 +28,13 @@
           <div class="statusRow">
             <button id="menuBtn" class="iconBtn" aria-label="菜单">⋮</button>
             <div class="bars">
-              <div class="meter"><span>焦虑雾</span><i id="barA"></i></div>
-              <div class="meter"><span>动能</span><i id="barM"></i></div>
-              <div class="meter"><span>复习进度</span><i id="barP"></i></div>
-              <div class="meter"><span>恢复</span><i id="barR"></i></div>
-              <div class="meter"><span>边界感</span><i id="barB"></i></div>
-              <div class="meter"><span>关系温度</span><i id="barT"></i></div>
-              <div class="meter"><span>理解/共情</span><i id="barE"></i></div>
+              <div class="meter"><span class="meterLabel">焦虑雾</span><strong class="meterValue" id="valueA">52%</strong><i id="barA"></i><span class="meterDelta" id="deltaA" aria-hidden="true"></span></div>
+              <div class="meter"><span class="meterLabel">动能</span><strong class="meterValue" id="valueM">38%</strong><i id="barM"></i><span class="meterDelta" id="deltaM" aria-hidden="true"></span></div>
+              <div class="meter"><span class="meterLabel">复习进度</span><strong class="meterValue" id="valueP">24%</strong><i id="barP"></i><span class="meterDelta" id="deltaP" aria-hidden="true"></span></div>
+              <div class="meter"><span class="meterLabel">恢复</span><strong class="meterValue" id="valueR">42%</strong><i id="barR"></i><span class="meterDelta" id="deltaR" aria-hidden="true"></span></div>
+              <div class="meter"><span class="meterLabel">边界感</span><strong class="meterValue" id="valueB">30%</strong><i id="barB"></i><span class="meterDelta" id="deltaB" aria-hidden="true"></span></div>
+              <div class="meter"><span class="meterLabel">关系温度</span><strong class="meterValue" id="valueT">55%</strong><i id="barT"></i><span class="meterDelta" id="deltaT" aria-hidden="true"></span></div>
+              <div class="meter"><span class="meterLabel">理解/共情</span><strong class="meterValue" id="valueE">25%</strong><i id="barE"></i><span class="meterDelta" id="deltaE" aria-hidden="true"></span></div>
             </div>
             <button id="historyBtn" class="iconBtn" aria-label="历史">🕘</button>
           </div>
@@ -74,6 +74,6 @@
       </div>
     </main>
 
-    <script src="./game.js?v=sun-release-20260502-unify-seven-bars"></script>
+    <script src="./game.js?v=sun-release-20260502-rework-bars-feedback"></script>
   </body>
 </html>
