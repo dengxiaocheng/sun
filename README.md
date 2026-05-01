@@ -5,6 +5,12 @@
 ## 可玩方式
 
 - 公网游玩（已验证）：`https://dengxiaocheng.github.io/sun/`
+
+当前发布版本使用缓存失效参数：
+
+- `style.css?v=3631c5f2`
+- `game.js?v=3631c5f2`
+
 - 本地启动（推荐）：
 
 ```bash
