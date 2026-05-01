@@ -68,6 +68,10 @@ body {
   display: none;
 }
 
+#titleScreen.hidden {
+  display: none !important;
+}
+
 #titleScreen {
   display: grid;
   place-items: center;

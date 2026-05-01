@@ -25,6 +25,23 @@ cd /home/openclaw/codex-projects/sun
 node assets/context/mobile-coarse-pointer-smoke.mjs
 ```
 
+## 发布与回归检查
+
+公网入口（可用）：
+
+```text
+https://dengxiaocheng.github.io/sun/
+```
+
+本地 200 检查（可用于快速回归）：
+
+```bash
+cd /home/openclaw/codex-projects/sun && python3 -m http.server 4173 >/tmp/sun-http.log 2>&1 & echo $!
+curl -sS -o /dev/null -w "local game http://127.0.0.1:4173/ -> %{http_code}\n" http://127.0.0.1:4173/
+kill $!
+curl -sS -o /dev/null -w "public url -> %{http_code}\n" https://dengxiaocheng.github.io/sun/
+```
+
 手工核验：使用手机浏览器或开发者工具移动模拟，点击“开始”后确认标题层与开始后覆盖层不再拦截点击，并完成首幕对话框至少一次点击推进。
 
 资源说明：
