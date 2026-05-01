@@ -10,7 +10,7 @@ const files = {
 const checks = [
   { name: 'title screen 有开始按钮', pass: /id="titleScreen"[\s\S]*id="startBtn"/.test(files.html) },
   { name: '开始按钮绑定点击与触控事件', pass: /bindStartButton\(startBtn,[\s\S]*\)\s*;/.test(files.js) && /touchend/.test(files.js) },
-  { name: 'title 层隐藏规则存在高优先级 CSS 覆盖', pass: /#titleScreen\.hidden\s*\{[\s\S]*?display:\s*none\s*!?important?\s*;/.test(files.css) },
+  { name: 'title/hud/systemPanel/storage/portraitLock 关键层有高优先级 hidden CSS 覆盖', pass: /#titleScreen\.hidden,\s*#hud\.hidden,\s*#systemPanel\.hidden,\s*#storagePanel\.hidden,\s*#portraitLock\.hidden\s*\{[\s\S]*?display:\s*none\s*!important\s*;[\s\S]*?\}/.test(files.css) },
   { name: '进入游戏会隐藏并禁用标题层点击', pass: /function enterPlayMode\([\s\S]*?titleScreen\.classList\.add\('hidden'\)[\s\S]*?titleScreen\.style\.pointerEvents\s*=\s*'none'/m.test(files.js) },
   { name: '进入游戏会禁用竖屏提示层点击', pass: /function enterPlayMode\([\s\S]*?portraitLock\.style\.pointerEvents\s*=\s*'none'/m.test(files.js) },
   { name: '游戏启动后显示 HUD', pass: /hud\.classList\.remove\('hidden'\)/.test(files.js) },

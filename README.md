@@ -42,6 +42,15 @@ kill $!
 curl -sS -o /dev/null -w "public url -> %{http_code}\n" https://dengxiaocheng.github.io/sun/
 ```
 
+快速验收（本次修复后）：
+
+```bash
+cd /home/openclaw/codex-projects/sun
+node assets/context/mobile-coarse-pointer-smoke.mjs
+curl -sS -o /dev/null -w "local game -> %{http_code}\n" http://127.0.0.1:4173/
+curl -sS -o /dev/null -w "public game -> %{http_code}\n" https://dengxiaocheng.github.io/sun/
+```
+
 手工核验：使用手机浏览器或开发者工具移动模拟，点击“开始”后确认标题层与开始后覆盖层不再拦截点击，并完成首幕对话框至少一次点击推进。
 
 资源说明：

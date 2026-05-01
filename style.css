@@ -68,8 +68,21 @@ body {
   display: none;
 }
 
-#titleScreen.hidden {
+#titleScreen.hidden,
+#hud.hidden,
+#systemPanel.hidden,
+#storagePanel.hidden,
+#portraitLock.hidden {
   display: none !important;
+  pointer-events: none !important;
+}
+
+#titleScreen.hidden,
+#hud.hidden,
+#systemPanel.hidden,
+#storagePanel.hidden,
+#portraitLock.hidden {
+  visibility: hidden;
 }
 
 #titleScreen {
