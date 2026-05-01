@@ -18,6 +18,15 @@ python3 -m http.server 4173
 http://127.0.0.1:4173/
 ```
 
+## 本地验证（移动端 / coarse-pointer）
+
+```bash
+cd /home/openclaw/codex-projects/sun
+node assets/context/mobile-coarse-pointer-smoke.mjs
+```
+
+手工核验：使用手机浏览器或开发者工具移动模拟，点击“开始”后确认标题层与开始后覆盖层不再拦截点击，并完成首幕对话框至少一次点击推进。
+
 资源说明：
 
 - 本仓库正文游戏本体在 `game.js`/`index.html`/`style.css`。对应美术资源清单在 `assets/images/manifest.json`。

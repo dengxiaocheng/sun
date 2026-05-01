@@ -707,6 +707,24 @@
     return `assets/images/${path}`;
   }
 
+  function isPortraitLayout() {
+    const media = window.matchMedia('(orientation: portrait)').matches;
+    const geometry = window.innerHeight >= window.innerWidth;
+    return media || geometry;
+  }
+
+  function enterPlayMode() {
+    titleScreen.classList.add('hidden');
+    titleScreen.setAttribute('aria-hidden', 'true');
+    titleScreen.setAttribute('inert', '');
+    titleScreen.style.pointerEvents = 'none';
+
+    portraitLock.classList.remove('open');
+    portraitLock.setAttribute('aria-hidden', 'true');
+    portraitLock.setAttribute('inert', '');
+    portraitLock.style.pointerEvents = 'none';
+  }
+
   function loadImage(path) {
     if (imageCache[path]?.status === 'ready' || imageCache[path]?.status === 'error') {
       return Promise.resolve(imageCache[path].img);
@@ -1137,7 +1155,7 @@
     }
 
     state.running = true;
-    titleScreen.classList.add('hidden');
+    enterPlayMode();
     hud.classList.remove('hidden');
 
     preloadScene(state.current).then(() => loadScene(state.current));
@@ -1244,7 +1262,9 @@
   }
 
   function checkOrientation() {
-    const portrait = window.matchMedia('(orientation: portrait)').matches;
+    if (state.running) return;
+
+    const portrait = isPortraitLayout();
     portraitLock.classList.toggle('open', !portrait);
     portraitLock.setAttribute('aria-hidden', String(portrait));
   }
