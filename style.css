@@ -178,8 +178,6 @@ button {
   gap: 8px;
   padding: 10px;
   align-items: center;
-  position: sticky;
-  top: 0;
   z-index: 10;
 }
 
@@ -318,6 +316,10 @@ button {
   gap: 8px;
 }
 
+#choiceArea:empty {
+  display: none;
+}
+
 .choiceBtn {
   min-height: 46px;
   font-size: 15px;
@@ -345,5 +347,15 @@ button {
     height: 640px;
     max-width: 360px;
     aspect-ratio: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  #hud {
+    justify-content: flex-start;
+  }
+
+  #choiceArea:not(:empty) {
+    margin-top: auto;
   }
 }
