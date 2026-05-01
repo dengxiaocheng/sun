@@ -8,8 +8,8 @@
 
 当前发布版本使用缓存失效参数：
 
-- `style.css?v=sun-release-20260502-orient-off`
-- `game.js?v=sun-release-20260502-orient-off`
+- `style.css?v=sun-release-20260502-layout-top`
+- `game.js?v=sun-release-20260502-layout-top`
 
 - 本地启动（推荐）：
 

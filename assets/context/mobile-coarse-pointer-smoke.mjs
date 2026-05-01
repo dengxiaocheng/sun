@@ -57,6 +57,10 @@ const readmeCacheVersion = readmeStyleMatch && readmeGameMatch && readmeStyleMat
   : '';
 const expectedCacheVersion = releaseVersion || htmlCacheVersion || readmeCacheVersion;
 
+const hudFlexStartForMobileMatch = /@media\s*\(\s*max-width:\s*600px[^)]*\)\s*\{[\s\S]*?#hud\s*\{[\s\S]*?justify-content:\s*flex-start;[\s\S]*?\}/.test(files.css);
+const choiceAreaMarginTopAutoMatch = /@media\s*\(\s*max-width:\s*600px[^)]*\)\s*\{[\s\S]*?#choiceArea:not\(:empty\)\s*\{[\s\S]*?margin-top:\s*auto;[\s\S]*?\}/.test(files.css);
+const choiceAreaEmptyHiddenMatch = /#choiceArea:empty\s*\{[\s\S]*?display:\s*none;[\s\S]*?\}/.test(files.css);
+
 const checks = [
   { name: 'CSS/JS/README 版本参数可解析', pass: Boolean(htmlCacheVersion) && Boolean(readmeCacheVersion) },
   {
@@ -87,7 +91,11 @@ const checks = [
   { name: '发布页 HTML 可抓取', pass: /<\s*html/.test(publicHtml) },
   { name: '横屏提示文案不在发布页', pass: !/请保持竖屏/.test(publicHtml) },
   { name: '发布页不再有 portraitLock 关键字', pass: !/portraitLock/.test(publicHtml) && !/portraitLock/.test(files.css) },
-  { name: 'release.version 与 index/query 一致', pass: expectedCacheVersion && htmlCacheVersion === expectedCacheVersion },
+  { name: 'release.version 与 index/query 一致', pass: releaseVersionFromFile && htmlCacheVersion === releaseVersionFromFile },
+  { name: 'release.version 与 README 一致', pass: releaseVersionFromFile && readmeCacheVersion === releaseVersionFromFile },
+  { name: '#hud: justify-content:flex-start', pass: hudFlexStartForMobileMatch },
+  { name: '#choiceArea:not(:empty) margin-top:auto', pass: choiceAreaMarginTopAutoMatch },
+  { name: '#choiceArea:empty display:none', pass: choiceAreaEmptyHiddenMatch },
 ];
 
 let failed = 0;
