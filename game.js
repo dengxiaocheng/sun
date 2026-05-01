@@ -715,6 +715,14 @@
     return media || geometry;
   }
 
+  function isMobileTouchPointerLayout() {
+    return window.matchMedia('(pointer: coarse)').matches
+      || window.matchMedia('(hover: none)').matches
+      || window.TouchEvent !== undefined
+      || 'ontouchstart' in window
+      || (navigator && navigator.maxTouchPoints > 0);
+  }
+
   function hidePortraitLock() {
     if (portraitLockTimer) {
       clearTimeout(portraitLockTimer);
@@ -1282,13 +1290,9 @@
   }
 
   function checkOrientation() {
-    if (state.running) {
-      hidePortraitLock();
-      return;
-    }
+    const shouldShowPortraitHint = isMobileTouchPointerLayout() && !isPortraitLayout();
 
-    const portrait = isPortraitLayout();
-    if (portrait) {
+    if (state.running || !shouldShowPortraitHint) {
       hidePortraitLock();
       return;
     }

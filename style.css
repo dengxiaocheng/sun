@@ -342,6 +342,7 @@ button {
 .modal {
   display: none;
   place-items: center;
+  pointer-events: none;
 }
 
 .modal.open {
