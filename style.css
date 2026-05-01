@@ -288,13 +288,13 @@ button {
 
 #dialogWrapper {
   margin: 10px;
-  background: linear-gradient(180deg, rgba(8, 8, 16, 0.66), rgba(10, 10, 18, 0.82));
+  background: linear-gradient(180deg, rgba(8, 8, 16, 0.35), rgba(10, 10, 18, 0.56));
   border: 1px solid rgba(242, 233, 219, 0.28);
   border-radius: 12px;
   padding: 12px;
   position: relative;
   min-height: 150px;
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(2px);
 }
 
 #speaker {

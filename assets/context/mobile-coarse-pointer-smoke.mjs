@@ -48,6 +48,7 @@ const drawDebugSlice = (() => {
   const end = files.js.indexOf('\n\n  function preloadScene', start);
   return files.js.slice(start, end > start ? end : files.js.length);
 })();
+const debugTupleTextPattern = /A:\s*\$\{state\.values\.A\}|M:\s*\$\{state\.values\.M\}|P:\s*\$\{state\.values\.P\}|R:\s*\$\{state\.values\.R\}|B:\s*\$\{state\.values\.B\}|T:\s*\$\{state\.values\.T\}|E:\s*\$\{state\.values\.E\}/;
 
 const cacheVersionPattern = /[a-zA-Z0-9._-]{4,64}/;
 const htmlStyleMatch = files.html.match(new RegExp(`style\\.css\\?v=(${cacheVersionPattern.source})`));
@@ -98,6 +99,10 @@ const checks = [
       && !/B:\\s*\$\{state\.values\.B\}/.test(drawDebugSlice)
       && !/T:\\s*\$\{state\.values\.T\}/.test(drawDebugSlice)
       && !/E:\\s*\$\{state\.values\.E\}/.test(drawDebugSlice),
+  },
+  {
+    name: '源码不再保留通过模板字符串输出 A/M/P/R/B/T/E 状态裸数值',
+    pass: !debugTupleTextPattern.test(files.js),
   },
   { name: 'title/hud/systemPanel/storage 关键层有高优先级 hidden CSS 覆盖', pass: /#titleScreen\.hidden,\s*#hud\.hidden,\s*#systemPanel\.hidden,\s*#storagePanel\.hidden\s*\{[\s\S]*?display:\s*none\s*!important\s*;[\s\S]*?\}/.test(files.css) },
   { name: '进入游戏会隐藏并禁用标题层点击', pass: /function enterPlayMode\([\s\S]*?titleScreen\.classList\.add\('hidden'\)[\s\S]*?titleScreen\.style\.pointerEvents\s*=\s*'none'/m.test(files.js) },
