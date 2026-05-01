@@ -23,16 +23,28 @@ const currentReleaseMatch = (() => {
   }
 })();
 
-const htmlStyleMatch = files.html.match(/style\.css\?v=([a-zA-Z0-9_-]{6,64})/);
-const htmlGameMatch = files.html.match(/game\.js\?v=([a-zA-Z0-9_-]{6,64})/);
-const readmeStyleMatch = files.readme.match(/`style\.css\?v=([a-zA-Z0-9_-]{6,64})`/);
-const readmeGameMatch = files.readme.match(/`game\.js\?v=([a-zA-Z0-9_-]{6,64})`/);
+const releaseVersionFromFile = (() => {
+  try {
+    return fs.readFileSync(`${repoRoot}/assets/context/release.version`, 'utf8').trim();
+  } catch {
+    return '';
+  }
+})();
+
+const cacheVersionPattern = /[a-zA-Z0-9._-]{4,64}/;
+const htmlStyleMatch = files.html.match(new RegExp(`style\\.css\\?v=(${cacheVersionPattern.source})`));
+const htmlGameMatch = files.html.match(new RegExp(`game\\.js\\?v=(${cacheVersionPattern.source})`));
+const readmeStyleMatch = files.readme.match(new RegExp(`\`style\\.css\\?v=(${cacheVersionPattern.source})\``));
+const readmeGameMatch = files.readme.match(new RegExp(`\`game\\.js\\?v=(${cacheVersionPattern.source})\``));
+
+const releaseVersion = releaseVersionFromFile || currentReleaseMatch;
+const legacyStaleVersions = new Set(['0586471', 'dec7e0b1']);
 
 const htmlCacheVersion = htmlStyleMatch && htmlGameMatch && htmlStyleMatch[1] === htmlGameMatch[1] ? htmlStyleMatch[1] : '';
 const readmeCacheVersion = readmeStyleMatch && readmeGameMatch && readmeStyleMatch[1] === readmeGameMatch[1]
   ? readmeStyleMatch[1]
   : '';
-const expectedCacheVersion = currentReleaseMatch || htmlCacheVersion || readmeCacheVersion;
+const expectedCacheVersion = releaseVersion || htmlCacheVersion || readmeCacheVersion;
 
 const checks = [
   { name: 'CSS/JS 资源版本参数可解析', pass: Boolean(htmlCacheVersion) && Boolean(readmeCacheVersion) },
@@ -40,6 +52,7 @@ const checks = [
     name: 'index 与 README 的版本参数一致',
     pass: htmlCacheVersion && readmeCacheVersion && htmlCacheVersion === readmeCacheVersion,
   },
+  { name: '版本参数不是旧 hash', pass: htmlCacheVersion && !legacyStaleVersions.has(htmlCacheVersion) },
   {
     name: 'index 与 README 版本参数一致于发布版本',
     pass: Boolean(expectedCacheVersion) && htmlCacheVersion === expectedCacheVersion && readmeCacheVersion === expectedCacheVersion,

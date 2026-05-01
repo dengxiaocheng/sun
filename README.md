@@ -8,8 +8,8 @@
 
 当前发布版本使用缓存失效参数：
 
-- `style.css?v=0586471`
-- `game.js?v=0586471`
+- `style.css?v=sun-release-20260502`
+- `game.js?v=sun-release-20260502`
 
 - 本地启动（推荐）：
 
