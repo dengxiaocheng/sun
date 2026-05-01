@@ -247,6 +247,19 @@ button {
   font-size: 13px;
 }
 
+.systemPanel h4 {
+  margin: 8px 0 2px;
+  color: #f7ddcd;
+  font-size: 12px;
+}
+
+#systemPanel p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 #speedSelect {
   font-family: inherit;
   border-radius: 9px;

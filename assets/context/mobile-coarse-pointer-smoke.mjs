@@ -42,6 +42,13 @@ const releaseVersionFromFile = (() => {
   }
 })();
 
+const drawDebugSlice = (() => {
+  const start = files.js.indexOf('function drawDebugStatus');
+  if (start < 0) return '';
+  const end = files.js.indexOf('\n\n  function preloadScene', start);
+  return files.js.slice(start, end > start ? end : files.js.length);
+})();
+
 const cacheVersionPattern = /[a-zA-Z0-9._-]{4,64}/;
 const htmlStyleMatch = files.html.match(new RegExp(`style\\.css\\?v=(${cacheVersionPattern.source})`));
 const htmlGameMatch = files.html.match(new RegExp(`game\\.js\\?v=(${cacheVersionPattern.source})`));
@@ -81,6 +88,17 @@ const checks = [
   },
   { name: 'title screen 有开始按钮', pass: /id="titleScreen"[\s\S]*id="startBtn"/.test(files.html) },
   { name: '开始按钮绑定点击与触控事件', pass: /bindStartButton\(startBtn,[\s\S]*\)\s*;/.test(files.js) && /touchend/.test(files.js) },
+  {
+    name: 'drawDebugStatus 不再绘制A/M/P/R/B/T/E裸字母数值串',
+    pass: drawDebugSlice
+      && !/A:\\s*\$\{state\.values\.A\}/.test(drawDebugSlice)
+      && !/M:\\s*\$\{state\.values\.M\}/.test(drawDebugSlice)
+      && !/P:\\s*\$\{state\.values\.P\}/.test(drawDebugSlice)
+      && !/R:\\s*\$\{state\.values\.R\}/.test(drawDebugSlice)
+      && !/B:\\s*\$\{state\.values\.B\}/.test(drawDebugSlice)
+      && !/T:\\s*\$\{state\.values\.T\}/.test(drawDebugSlice)
+      && !/E:\\s*\$\{state\.values\.E\}/.test(drawDebugSlice),
+  },
   { name: 'title/hud/systemPanel/storage 关键层有高优先级 hidden CSS 覆盖', pass: /#titleScreen\.hidden,\s*#hud\.hidden,\s*#systemPanel\.hidden,\s*#storagePanel\.hidden\s*\{[\s\S]*?display:\s*none\s*!important\s*;[\s\S]*?\}/.test(files.css) },
   { name: '进入游戏会隐藏并禁用标题层点击', pass: /function enterPlayMode\([\s\S]*?titleScreen\.classList\.add\('hidden'\)[\s\S]*?titleScreen\.style\.pointerEvents\s*=\s*'none'/m.test(files.js) },
   { name: '对话框点击可推进到下一句', pass: /dialogWrapper\.addEventListener\('click',[\s\S]*?state\.lineIndex < scene\.lines\.length - 1/.test(files.js) },

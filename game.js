@@ -18,6 +18,10 @@
   const barA = document.getElementById('barA');
   const barM = document.getElementById('barM');
   const barP = document.getElementById('barP');
+  const statusLabelR = document.getElementById('statusR');
+  const statusLabelB = document.getElementById('statusB');
+  const statusLabelT = document.getElementById('statusT');
+  const statusLabelE = document.getElementById('statusE');
 
   const speaker = document.getElementById('speaker');
   const dialogText = document.getElementById('dialogText');
@@ -855,6 +859,30 @@
     barA.style.setProperty('--v', `${state.values.A}%`);
     barM.style.setProperty('--v', `${state.values.M}%`);
     barP.style.setProperty('--v', `${state.values.P}%`);
+
+    if (statusLabelR) {
+      statusLabelR.textContent = `恢复值（R）: ${getStateLabel('R', state.values.R)}`;
+    }
+    if (statusLabelB) {
+      statusLabelB.textContent = `边界感（B）: ${getStateLabel('B', state.values.B)}`;
+    }
+    if (statusLabelT) {
+      statusLabelT.textContent = `亲密温度（T）: ${getStateLabel('T', state.values.T)}`;
+    }
+    if (statusLabelE) {
+      statusLabelE.textContent = `艺术回声（E）: ${getStateLabel('E', state.values.E)}`;
+    }
+  }
+
+  function getStateLabel(key, value) {
+    const levels = {
+      R: ['恢复不足，身体提醒暂停', '稍有疲惫，注意回稳', '恢复正常，行动可持续', '恢复充沛，状态较稳'],
+      B: ['边界薄弱，易失衡', '边界在尝试中', '边界渐稳，开始表达', '边界健康，能保护自己'],
+      T: ['沟通僵化，易误解', '有热度但不稳', '关系更可被听见', '信任较稳，互动更真诚'],
+      E: ['理解未落地，仍偏理想化', '有共鸣但不完整', '理解正在接近现实', '价值感更清晰，关系更稳']
+    }[key] || ['极低', '偏低', '平衡', '良好'];
+    const idx = value >= 70 ? 3 : value >= 45 ? 2 : value >= 25 ? 1 : 0;
+    return levels[idx];
   }
 
   function applySceneIntro(scene) {
@@ -1090,22 +1118,13 @@
       const shift = Math.max(1, Math.floor((state.values.A - 50) / 12));
       ctx.save();
       ctx.translate((Math.random() * shift) - shift / 2, (Math.random() * shift) - shift / 2);
-      drawDebugStatus();
+      // 保留高焦虑动效，不再叠加数值 HUD，避免调试信息泄露。
       ctx.restore();
-    } else {
-      drawDebugStatus();
     }
   }
 
   function drawDebugStatus() {
-    ctx.fillStyle = '#e6d6c6';
-    ctx.font = '11px FangSongFallback, serif';
-    ctx.textAlign = 'left';
-    ctx.fillText(
-      `A:${state.values.A}  M:${state.values.M}  P:${state.values.P}  R:${state.values.R}  B:${state.values.B}  T:${state.values.T}  E:${state.values.E}`,
-      8,
-      16
-    );
+    return;
   }
 
   function preloadScene(id) {
