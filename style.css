@@ -1,0 +1,354 @@
+:root {
+  --bg: #11111c;
+  --panel: rgba(14, 14, 28, 0.86);
+  --panel-soft: rgba(14, 14, 28, 0.65);
+  --line: rgba(240, 228, 222, 0.5);
+  --text: #f2e9db;
+  --muted: #a59a8d;
+  --accent: #f4b38d;
+}
+
+@font-face {
+  font-family: "FangSongFallback";
+  src: local("Georgia"), local("Songti SC"), local("Microsoft YaHei");
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, #231a2b 0%, #11111c 50%, #07070d 100%);
+  color: var(--text);
+  font-family: FangSongFallback, "Trebuchet MS", "PingFang SC", "Hiragino Sans GB", serif;
+}
+
+#wrap {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 10px;
+}
+
+#gameContainer {
+  position: relative;
+  width: min(92vw, 420px);
+  max-width: 420px;
+  aspect-ratio: 9 / 16;
+  max-height: min(96vh, 750px);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(242, 233, 219, 0.12);
+  background: #06060c;
+}
+
+#gameCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: saturate(1.05);
+}
+
+.screen,
+#portraitLock {
+  position: absolute;
+  inset: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+#titleScreen {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, rgba(32, 22, 45, 0.9), rgba(10, 10, 20, 0.8));
+  z-index: 4;
+  animation: fadeIn 0.6s ease both;
+}
+
+.titleCard {
+  width: min(88%, 320px);
+  text-align: center;
+  padding: 24px;
+  border: 1px solid rgba(244, 179, 141, 0.4);
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 25px rgba(244, 179, 141, 0.08);
+}
+
+.titleCard h1 {
+  margin: 8px 0 2px;
+  letter-spacing: 0.06em;
+  color: #f2d5c3;
+}
+
+.kicker {
+  margin: 0;
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.desc {
+  margin: 10px 0;
+  color: #d5c2b2;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.titleActions {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+button {
+  appearance: none;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  border: 1px solid rgba(242, 233, 219, 0.24);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: inherit;
+  padding: 12px 14px;
+  font-size: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.bigBtn {
+  background: linear-gradient(180deg, #b06f59, #6f3f2a);
+  border-color: rgba(255, 220, 200, 0.35);
+  color: #fde9d8;
+  font-weight: 600;
+}
+
+.ghostBtn {
+  background: var(--panel);
+}
+
+.iconBtn {
+  width: 44px;
+  min-height: 44px;
+  padding: 0;
+  font-size: 20px;
+}
+
+#hud {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+#hud > * {
+  pointer-events: auto;
+}
+
+.statusRow {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.bars {
+  flex: 1;
+  display: grid;
+  gap: 5px;
+}
+
+.meter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--panel-soft);
+  border-radius: 9px;
+  padding: 4px 6px;
+  line-height: 1;
+}
+
+.meter span {
+  width: 56px;
+  flex: 0 0 auto;
+}
+
+.meter i {
+  position: relative;
+  display: block;
+  height: 7px;
+  flex: 1;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.meter i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: var(--v, 52%);
+  background: linear-gradient(90deg, #f6d8bd, #d77f6f);
+  border-radius: 999px;
+}
+
+.systemPanel,
+#portraitLock {
+  position: absolute;
+  inset: 56px 10px auto 10px;
+  z-index: 12;
+  background: var(--panel);
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.systemPanel h3,
+#portraitLock .panel h2 {
+  margin: 0 0 5px;
+  color: #ffddc8;
+}
+
+.systemPanel label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+#speedSelect {
+  font-family: inherit;
+  border-radius: 9px;
+  border: 1px solid rgba(242, 233, 219, 0.26);
+  padding: 7px;
+  background: #1a1730;
+  color: var(--text);
+}
+
+#storagePanel {
+  inset: 56px 10px auto 10px;
+}
+
+#saveButtons,
+#loadButtons {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+#saveButtons button,
+#loadButtons button {
+  font-size: 12px;
+  min-height: 38px;
+}
+
+#dialogWrapper {
+  margin: 10px;
+  background: linear-gradient(180deg, rgba(8, 8, 16, 0.66), rgba(10, 10, 18, 0.82));
+  border: 1px solid rgba(242, 233, 219, 0.28);
+  border-radius: 12px;
+  padding: 12px;
+  position: relative;
+  min-height: 150px;
+  backdrop-filter: blur(1px);
+}
+
+#speaker {
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+#dialogText {
+  color: #f6e8da;
+  font-size: 18px;
+  line-height: 1.55;
+  min-height: 64px;
+  white-space: pre-wrap;
+}
+
+#dialogText.large {
+  font-size: 20px;
+}
+
+#hint {
+  position: absolute;
+  right: 10px;
+  bottom: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+#choiceArea {
+  margin: 8px 10px 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.choiceBtn {
+  min-height: 46px;
+  font-size: 15px;
+  background: linear-gradient(180deg, rgba(82, 64, 80, 0.95), rgba(37, 27, 40, 0.95));
+  text-align: left;
+}
+
+.choiceBtn:active {
+  transform: translateY(1px);
+}
+
+.choiceBtn:disabled {
+  opacity: 0.45;
+  background: #3a2f3a;
+}
+
+.modal {
+  display: none;
+  place-items: center;
+}
+
+.modal.open {
+  display: grid;
+}
+
+#portraitLock .panel {
+  width: min(84%, 320px);
+  text-align: center;
+  padding: 14px;
+  background: var(--panel);
+  border-radius: 12px;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(8px) scale(0.985);}
+  to {opacity: 1; transform: translateY(0) scale(1);} 
+}
+
+@media (min-width: 600px) {
+  #gameContainer {
+    width: 360px;
+    height: 640px;
+    max-width: 360px;
+    aspect-ratio: auto;
+  }
+}

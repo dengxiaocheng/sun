@@ -1,0 +1,373 @@
+[
+  {
+    "name": "char_smx_daily_sheet",
+    "file": "characters/char_smx_daily_sheet.png",
+    "spec": "384x160 PNG; 4 frames x 96x160",
+    "source_atlas": "01_char_main_atlas",
+    "note": "cropped and reassembled from generated character atlas; dark matte retained to preserve outlines"
+  },
+  {
+    "name": "char_smx_pinkcoat_sheet",
+    "file": "characters/char_smx_pinkcoat_sheet.png",
+    "spec": "384x160 PNG; 4 frames x 96x160",
+    "source_atlas": "01_char_main_atlas",
+    "note": "cropped and reassembled from generated character atlas; dark matte retained to preserve outlines"
+  },
+  {
+    "name": "char_smx_study_sheet",
+    "file": "characters/char_smx_study_sheet.png",
+    "spec": "384x160 PNG; 4 frames x 96x160",
+    "source_atlas": "01_char_main_atlas",
+    "note": "cropped and reassembled from generated character atlas; dark matte retained to preserve outlines"
+  },
+  {
+    "name": "char_smx_exam_sheet",
+    "file": "characters/char_smx_exam_sheet.png",
+    "spec": "384x160 PNG; 4 frames x 96x160",
+    "source_atlas": "01_char_main_atlas",
+    "note": "cropped and reassembled from generated character atlas; dark matte retained to preserve outlines"
+  },
+  {
+    "name": "char_dxc_daily_sheet",
+    "file": "characters/char_dxc_daily_sheet.png",
+    "spec": "384x160 PNG; 4 frames x 96x160",
+    "source_atlas": "01_char_main_atlas",
+    "note": "cropped and reassembled from generated character atlas; dark matte retained to preserve outlines"
+  },
+  {
+    "name": "char_dxc_studio_sheet",
+    "file": "characters/char_dxc_studio_sheet.png",
+    "spec": "384x160 PNG; 4 frames x 96x160",
+    "source_atlas": "01_char_main_atlas",
+    "note": "cropped and reassembled from generated character atlas; dark matte retained to preserve outlines"
+  },
+  {
+    "name": "char_dxc_tender_sheet",
+    "file": "characters/char_dxc_tender_sheet.png",
+    "spec": "384x160 PNG; 4 frames x 96x160",
+    "source_atlas": "05_char_support_atlas",
+    "note": "cropped and reassembled from generated character atlas; dark matte retained to preserve outlines"
+  },
+  {
+    "name": "char_linzhi_sheet",
+    "file": "characters/char_linzhi_sheet.png",
+    "spec": "384x160 PNG; 4 frames x 96x160",
+    "source_atlas": "05_char_support_atlas",
+    "note": "cropped and reassembled from generated character atlas; dark matte retained to preserve outlines"
+  },
+  {
+    "name": "char_tangchu_sheet",
+    "file": "characters/char_tangchu_sheet.png",
+    "spec": "384x160 PNG; 4 frames x 96x160",
+    "source_atlas": "05_char_support_atlas",
+    "note": "cropped and reassembled from generated character atlas; dark matte retained to preserve outlines"
+  },
+  {
+    "name": "char_counselor_sheet",
+    "file": "characters/char_counselor_sheet.png",
+    "spec": "384x160 PNG; 4 frames x 96x160",
+    "source_atlas": "05_char_support_atlas",
+    "note": "cropped and reassembled from generated character atlas; dark matte retained to preserve outlines"
+  },
+  {
+    "name": "char_unknown_crowd_sheet",
+    "file": "characters/char_unknown_crowd_sheet.png",
+    "spec": "384x160 PNG; 4 frames x 96x160",
+    "source_atlas": "05_char_support_atlas",
+    "note": "cropped and reassembled from generated character atlas; dark matte retained to preserve outlines"
+  },
+  {
+    "name": "char_mother_avatar",
+    "file": "characters/char_mother_avatar.png",
+    "spec": "64x64 PNG",
+    "source_atlas": "05_char_support_atlas",
+    "note": "cropped from avatar panel"
+  },
+  {
+    "name": "bg_title_powerline_mist",
+    "file": "backgrounds/bg_title_powerline_mist.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "02_bg_atlas_a",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_memory_photo_powerline",
+    "file": "backgrounds/bg_memory_photo_powerline.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "02_bg_atlas_a",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_dorm_0230",
+    "file": "backgrounds/bg_dorm_0230.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "02_bg_atlas_a",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_campus_morning_fog",
+    "file": "backgrounds/bg_campus_morning_fog.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "02_bg_atlas_a",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_selfstudy_room_cold",
+    "file": "backgrounds/bg_selfstudy_room_cold.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "02_bg_atlas_a",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_library_stack",
+    "file": "backgrounds/bg_library_stack.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "02_bg_atlas_a",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_cafeteria_grey_noon",
+    "file": "backgrounds/bg_cafeteria_grey_noon.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "03_bg_atlas_b",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_bus_stop_rain",
+    "file": "backgrounds/bg_bus_stop_rain.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "03_bg_atlas_b",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_deng_studio_chapel",
+    "file": "backgrounds/bg_deng_studio_chapel.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "03_bg_atlas_b",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_counseling_corridor",
+    "file": "backgrounds/bg_counseling_corridor.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "03_bg_atlas_b",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_mock_exam_room",
+    "file": "backgrounds/bg_mock_exam_room.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "03_bg_atlas_b",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_rooftop_evening",
+    "file": "backgrounds/bg_rooftop_evening.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "03_bg_atlas_b",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_exam_gate_dawn",
+    "file": "backgrounds/bg_exam_gate_dawn.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "04_bg_atlas_c",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "bg_black_noise",
+    "file": "backgrounds/bg_black_noise.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "04_bg_atlas_c",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "cg_powerline_couple",
+    "file": "cg/cg_powerline_couple.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "06_cg_story_atlas",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "cg_smx_toilet_panic",
+    "file": "cg/cg_smx_toilet_panic.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "06_cg_story_atlas",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "cg_dxc_electronic_liturgy",
+    "file": "cg/cg_dxc_electronic_liturgy.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "06_cg_story_atlas",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "cg_translation_note",
+    "file": "cg/cg_translation_note.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "06_cg_story_atlas",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "cg_exam_morning_hands",
+    "file": "cg/cg_exam_morning_hands.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "06_cg_story_atlas",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "cg_ending_foglamp",
+    "file": "cg/cg_ending_foglamp.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "07_cg_endings_atlas",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "cg_ending_low_prayer",
+    "file": "cg/cg_ending_low_prayer.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "07_cg_endings_atlas",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "cg_ending_poweroff",
+    "file": "cg/cg_ending_poweroff.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "07_cg_endings_atlas",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "cg_ending_march_loop",
+    "file": "cg/cg_ending_march_loop.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "07_cg_endings_atlas",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "cg_ending_new_page",
+    "file": "cg/cg_ending_new_page.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "07_cg_endings_atlas",
+    "note": "cropped from generated atlas; center-cropped to 9:16"
+  },
+  {
+    "name": "ui_dialog_box_9slice",
+    "file": "ui/ui_dialog_box_9slice.png",
+    "spec": "32x32 PNG",
+    "source_atlas": "programmatic from UI palette",
+    "note": "exact-size 9-slice source generated from palette"
+  },
+  {
+    "name": "ui_choice_button_9slice",
+    "file": "ui/ui_choice_button_9slice.png",
+    "spec": "32x32 PNG",
+    "source_atlas": "programmatic from UI palette",
+    "note": "exact-size 9-slice source generated from palette"
+  },
+  {
+    "name": "ui_choice_button_locked",
+    "file": "ui/ui_choice_button_locked.png",
+    "spec": "32x32 PNG",
+    "source_atlas": "programmatic from UI palette",
+    "note": "exact-size 9-slice source generated from palette"
+  },
+  {
+    "name": "ui_meter_fog",
+    "file": "ui/ui_meter_fog.png",
+    "spec": "96x12 PNG",
+    "source_atlas": "programmatic from UI palette",
+    "note": "exact-size status meter"
+  },
+  {
+    "name": "ui_meter_drive",
+    "file": "ui/ui_meter_drive.png",
+    "spec": "96x12 PNG",
+    "source_atlas": "programmatic from UI palette",
+    "note": "exact-size status meter"
+  },
+  {
+    "name": "ui_meter_study",
+    "file": "ui/ui_meter_study.png",
+    "spec": "96x12 PNG",
+    "source_atlas": "programmatic from UI palette",
+    "note": "exact-size status meter"
+  },
+  {
+    "name": "ui_icons_choices",
+    "file": "ui/ui_icons_choices.png",
+    "spec": "128x16 PNG; 8 icons x 16x16",
+    "source_atlas": "08_ui_atlas",
+    "note": "cropped icon strip and resized"
+  },
+  {
+    "name": "ui_phone_frame",
+    "file": "ui/ui_phone_frame.png",
+    "spec": "180x320 PNG",
+    "source_atlas": "08_ui_atlas",
+    "note": "cropped from UI atlas"
+  },
+  {
+    "name": "ui_save_slot",
+    "file": "ui/ui_save_slot.png",
+    "spec": "160x48 PNG",
+    "source_atlas": "08_ui_atlas",
+    "note": "cropped from UI atlas and resized"
+  },
+  {
+    "name": "fx_fog_overlay_sheet",
+    "file": "fx/fx_fog_overlay_sheet.png",
+    "spec": "720x320 PNG",
+    "source_atlas": "09_fx_palette_atlas",
+    "note": "4 frames x 180x320, cropped from FX atlas"
+  },
+  {
+    "name": "fx_crt_noise_sheet",
+    "file": "fx/fx_crt_noise_sheet.png",
+    "spec": "1080x320 PNG",
+    "source_atlas": "09_fx_palette_atlas",
+    "note": "6 frames x 180x320, cropped from FX atlas"
+  },
+  {
+    "name": "fx_rain_sheet",
+    "file": "fx/fx_rain_sheet.png",
+    "spec": "720x320 PNG",
+    "source_atlas": "09_fx_palette_atlas",
+    "note": "4 frames x 180x320, cropped from FX atlas"
+  },
+  {
+    "name": "fx_powerline_spark_sheet",
+    "file": "fx/fx_powerline_spark_sheet.png",
+    "spec": "256x64 PNG; 16 frames x 16x64 nominal",
+    "source_atlas": "09_fx_palette_atlas",
+    "note": "cropped spark strip and resized"
+  },
+  {
+    "name": "fx_text_shiver",
+    "file": "fx/fx_text_shiver.png",
+    "spec": "64x8 PNG",
+    "source_atlas": "09_fx_palette_atlas",
+    "note": "cropped text-shiver sample and resized"
+  },
+  {
+    "name": "palette_mist_32",
+    "file": "palettes/palette_mist_32.gpl",
+    "spec": "32-color GPL palette",
+    "source_atlas": "manual palette based on generated FX atlas",
+    "note": "palette file"
+  },
+  {
+    "name": "palette_mist_32_png",
+    "file": "palettes/palette_mist_32.png",
+    "spec": "64x16 PNG swatch preview",
+    "source_atlas": "manual palette based on generated FX atlas",
+    "note": "preview of GPL palette"
+  },
+  {
+    "name": "palette_anxiety_states",
+    "file": "palettes/palette_anxiety_states.png",
+    "spec": "64x16 PNG",
+    "source_atlas": "manual palette based on generated FX atlas",
+    "note": "4 anxiety-state palette blocks"
+  }
+]

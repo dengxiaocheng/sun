@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>雾线下的译者</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main id="wrap">
+      <div id="gameContainer">
+        <canvas id="gameCanvas" width="360" height="640" aria-label="游戏画布"></canvas>
+
+        <div id="portraitLock" class="modal" aria-hidden="true">
+          <div class="panel">
+            <h2>请保持竖屏</h2>
+            <p>本游戏为手机竖屏体验，横屏下请顺时针转回 9:16。</p>
+          </div>
+        </div>
+
+        <div id="titleScreen" class="screen">
+          <div class="titleCard">
+            <p class="kicker">SUNNY / VISUAL NOVEL</p>
+            <h1>雾线下的译者</h1>
+            <p class="desc">在雾里学会给焦虑下定义，而不是继续被它定义。</p>
+            <p class="desc">每一步都可执行：先活着，再修正。</p>
+            <div class="titleActions">
+              <button id="startBtn" class="bigBtn">开始</button>
+              <button id="loadBtn" class="ghostBtn">读取上次存档</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="hud" class="hidden">
+          <div class="statusRow">
+            <button id="menuBtn" class="iconBtn" aria-label="菜单">⋮</button>
+            <div class="bars">
+              <div class="meter"><span>焦虑雾</span><i id="barA"></i></div>
+              <div class="meter"><span>动能</span><i id="barM"></i></div>
+              <div class="meter"><span>复习进度</span><i id="barP"></i></div>
+            </div>
+            <button id="historyBtn" class="iconBtn" aria-label="历史">🕘</button>
+          </div>
+
+          <div id="systemPanel" class="systemPanel hidden">
+            <h3>设置</h3>
+            <label><input type="checkbox" id="toggleFog" checked /> 雾效开关</label>
+            <label><input type="checkbox" id="toggleJitter" checked /> 文字抖动</label>
+            <label><input type="checkbox" id="toggleLowFreq" checked /> 低频效果</label>
+            <label><input type="checkbox" id="toggleLargeText" /> 大字号</label>
+            <label>文字速度</label>
+            <select id="speedSelect">
+              <option value="slow">慢</option>
+              <option value="normal" selected>标准</option>
+              <option value="fast">快</option>
+              <option value="instant">瞬间</option>
+            </select>
+            <button id="closeSettings">关闭</button>
+          </div>
+
+          <div id="storagePanel" class="systemPanel hidden">
+            <h3>存档</h3>
+            <p>手动存档</p>
+            <div id="saveButtons"></div>
+            <p>读档</p>
+            <div id="loadButtons"></div>
+            <button id="closeStorage">关闭</button>
+          </div>
+
+          <div id="dialogWrapper">
+            <div id="speaker"></div>
+            <div id="dialogText">加载中...</div>
+            <div id="hint">点按对话框继续</div>
+          </div>
+          <div id="choiceArea"></div>
+        </div>
+      </div>
+    </main>
+
+    <script src="./game.js"></script>
+  </body>
+</html>
