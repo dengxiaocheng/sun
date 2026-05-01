@@ -8,8 +8,8 @@
 
 当前发布版本使用缓存失效参数：
 
-- `style.css?v=3631c5f2`
-- `game.js?v=3631c5f2`
+- `style.css?v=dec7e0b1`
+- `game.js?v=dec7e0b1`
 
 - 本地启动（推荐）：
 

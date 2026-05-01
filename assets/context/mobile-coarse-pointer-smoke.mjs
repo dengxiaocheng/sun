@@ -8,7 +8,7 @@ const files = {
 };
 
 const checks = [
-  { name: 'CSS/JS 资源带版本 query', pass: /style\.css\?v=3631c5f2/.test(files.html) && /game\.js\?v=3631c5f2/.test(files.html) },
+  { name: 'CSS/JS 资源带版本 query', pass: /style\.css\?v=dec7e0b1/.test(files.html) && /game\.js\?v=dec7e0b1/.test(files.html) },
   { name: 'title screen 有开始按钮', pass: /id="titleScreen"[\s\S]*id="startBtn"/.test(files.html) },
   { name: '开始按钮绑定点击与触控事件', pass: /bindStartButton\(startBtn,[\s\S]*\)\s*;/.test(files.js) && /touchend/.test(files.js) },
   { name: 'title/hud/systemPanel/storage/portraitLock 关键层有高优先级 hidden CSS 覆盖', pass: /#titleScreen\.hidden,\s*#hud\.hidden,\s*#systemPanel\.hidden,\s*#storagePanel\.hidden,\s*#portraitLock\.hidden\s*\{[\s\S]*?display:\s*none\s*!important\s*;[\s\S]*?\}/.test(files.css) },
