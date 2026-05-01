@@ -23,8 +23,8 @@
 
 当前发布版本使用缓存失效参数：
 
-- `style.css?v=sun-release-20260502-rework-bars-feedback`
-- `game.js?v=sun-release-20260502-rework-bars-feedback`
+- `style.css?v=sun-release-20260503-status-bars-feedback-refresh`
+- `game.js?v=sun-release-20260503-status-bars-feedback-refresh`
 
 七个状态统一展示为中文进度条：焦虑雾、动能、复习进度、恢复、边界感、关系温度、理解/共情。
 7 条进度条为同一套状态区，显示标签与实时百分比；选择后受影响条目会立即高亮并显示 +N/-N 提示。

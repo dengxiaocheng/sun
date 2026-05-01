@@ -246,6 +246,18 @@ button {
   transform: translateY(0);
 }
 
+.meter.statusUp .meterDelta {
+  color: #c8ffd8;
+}
+
+.meter.statusDown .meterDelta {
+  color: #ffc0d2;
+}
+
+.meter.statusClamp .meterDelta {
+  color: #ffddc2;
+}
+
 .meterDelta {
   flex: 0 0 auto;
   width: 38px;

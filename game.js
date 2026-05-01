@@ -847,23 +847,27 @@
   }
 
   function normalizeDelta(stateItem, delta) {
-    if (!delta) return;
+    if (!delta) return [];
     const changed = [];
+
     Object.entries(delta).forEach(([key, value]) => {
       if (key === 'badLoop') {
         state.badLoop = Math.max(0, (state.badLoop || 0) + value);
         return;
       }
+
       if (typeof value === 'number' && Object.prototype.hasOwnProperty.call(state.values, key)) {
         const before = Number(state.values[key]) || 0;
-        const next = Math.max(0, Math.min(100, before + value));
+        const normalized = Number.isFinite(value) ? Math.round(value) : 0;
+        const next = Math.max(0, Math.min(100, before + normalized));
         const clamped = Math.round(next);
-        if (clamped !== before) {
-          changed.push({ key, delta: clamped - before, before });
+        if (clamped !== before || normalized !== 0) {
+          changed.push({ key, delta: normalized, before, changed: clamped !== before });
         }
         state.values[key] = clamped;
       }
     });
+
     clampValues();
     if (changed.length > 0) {
       syncBars(changed);
@@ -897,11 +901,17 @@
   }
 
   function syncBars(changes = []) {
-    const deltaLookup = Object.create(null);
+    const requestedDeltaLookup = Object.create(null);
+    const effectiveDeltaLookup = Object.create(null);
+
     for (const item of changes || []) {
-      const { key, delta } = item;
+      const { key, delta, changed = false } = item;
       if (key && STATUS_LABELS.has(key)) {
-        deltaLookup[key] = delta;
+        const requestedDelta = Number.isFinite(delta) ? Math.round(delta) : 0;
+        requestedDeltaLookup[key] = requestedDelta;
+        if (changed) {
+          effectiveDeltaLookup[key] = requestedDelta;
+        }
       }
     }
 
@@ -916,21 +926,33 @@
         valueEl.textContent = `${value}%`;
       }
 
-      const hasDeltaForKey = Object.prototype.hasOwnProperty.call(deltaLookup, key);
-      const delta = Number.isFinite(deltaLookup[key]) ? deltaLookup[key] : 0;
-      if (!hasDeltaForKey || !delta || !deltaEl || !meter) {
+      const hasDeltaForKey = Object.prototype.hasOwnProperty.call(requestedDeltaLookup, key);
+      const requestedDelta = Number.isFinite(requestedDeltaLookup[key]) ? requestedDeltaLookup[key] : 0;
+      if (!hasDeltaForKey || !deltaEl || !meter) {
         if (!statusFlashTimers[key]) {
           if (deltaEl) deltaEl.textContent = '';
           bar.removeAttribute('data-delta');
-          meter.classList.remove('changed', 'statusFlash');
+          meter.classList.remove('changed', 'statusFlash', 'statusUp', 'statusDown');
         }
         return;
       }
 
-      const deltaText = delta > 0 ? `+${delta}` : `${delta}`;
+      const deltaText = requestedDelta > 0 ? `+${requestedDelta}` : `${requestedDelta}`;
       bar.setAttribute('data-delta', deltaText);
       deltaEl.textContent = `${deltaText}%`;
+      meter.classList.remove('statusUp', 'statusDown');
+      if (requestedDelta > 0) {
+        meter.classList.add('statusUp');
+      } else if (requestedDelta < 0) {
+        meter.classList.add('statusDown');
+      }
+
       meter.classList.add('changed', 'statusFlash');
+      if (!Object.prototype.hasOwnProperty.call(effectiveDeltaLookup, key) && requestedDelta !== 0) {
+        meter.classList.add('statusClamp');
+      } else {
+        meter.classList.remove('statusClamp');
+      }
 
       if (statusFlashTimers[key]) {
         clearTimeout(statusFlashTimers[key]);
@@ -938,6 +960,7 @@
       statusFlashTimers[key] = window.setTimeout(() => {
         meter.classList.remove('statusFlash');
         meter.classList.remove('changed');
+        meter.classList.remove('statusUp', 'statusDown', 'statusClamp');
         bar.removeAttribute('data-delta');
         if (deltaEl) {
           deltaEl.textContent = '';

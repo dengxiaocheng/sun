@@ -92,14 +92,46 @@ const expectedCacheVersion = releaseVersion || htmlCacheVersion || readmeCacheVe
 const hudFlexStartForMobileMatch = /@media\s*\(\s*max-width:\s*600px[^)]*\)\s*\{[\s\S]*?#hud\s*\{[\s\S]*?justify-content:\s*flex-start;[\s\S]*?\}/.test(files.css);
 const choiceAreaMarginTopAutoMatch = /@media\s*\(\s*max-width:\s*600px[^)]*\)\s*\{[\s\S]*?#choiceArea:not\(:empty\)\s*\{[\s\S]*?margin-top:\s*auto;[\s\S]*?\}/.test(files.css);
 const choiceAreaEmptyHiddenMatch = /#choiceArea:empty\s*\{[\s\S]*?display:\s*none;[\s\S]*?\}/.test(files.css);
+
+const statusBarsSourceStart = files.js.indexOf('const statusBars = [');
+const statusBarsSourceEnd = files.js.indexOf('const statusFlashTimers', statusBarsSourceStart + 1);
+const statusBarsSource = statusBarsSourceStart >= 0 && statusBarsSourceEnd > statusBarsSourceStart
+  ? files.js.slice(statusBarsSourceStart, statusBarsSourceEnd)
+  : '';
+
+const choiceAreaSourceStart = files.js.indexOf('for (const option of scene.choices)');
+const choiceAreaSourceEnd = files.js.indexOf('function chooseStorageSlot', choiceAreaSourceStart + 1);
+const choiceAreaSource = choiceAreaSourceStart >= 0 && choiceAreaSourceEnd > choiceAreaSourceStart
+  ? files.js.slice(choiceAreaSourceStart, choiceAreaSourceEnd)
+  : files.js;
+
+const hasDefinedSevenStatusBars = /barA/.test(statusBarsSource)
+  && /barM/.test(statusBarsSource)
+  && /barP/.test(statusBarsSource)
+  && /barR/.test(statusBarsSource)
+  && /barB/.test(statusBarsSource)
+  && /barT/.test(statusBarsSource)
+  && /barE/.test(statusBarsSource);
+const hasSevenStatusKeysInBars = /key:\s*['"]A['"]/.test(statusBarsSource)
+  && /key:\s*['"]M['"]/.test(statusBarsSource)
+  && /key:\s*['"]P['"]/.test(statusBarsSource)
+  && /key:\s*['"]R['"]/.test(statusBarsSource)
+  && /key:\s*['"]B['"]/.test(statusBarsSource)
+  && /key:\s*['"]T['"]/.test(statusBarsSource)
+  && /key:\s*['"]E['"]/.test(statusBarsSource);
+
 const hasSevenBarDom = hasIds(files.html, statusBarIds);
 const hasSevenValueDom = hasIds(files.html, statusBarHtmlIds);
 const hasSevenDeltaDom = hasIds(files.html, statusBarDeltaIds);
 const syncBarsUpdatesAllBars = /statusBars\.forEach/.test(syncBarsSource) && /--v/.test(syncBarsSource);
 const syncBarsUpdatesAllValues = /textContent\s*=\s*/.test(syncBarsSource) && /valueEl/.test(syncBarsSource);
 const hasVisibleChangeFeedback = /data-delta|changed|statusFlash/i.test(syncBarsSource);
+const hasChoiceChoiceDeltaInput = /const delta = option\.delta \|\| \{\};/.test(choiceAreaSource);
+const hasChoiceChoiceNormalizeDeltaCall = /normalizeDelta\(state, delta\);/.test(choiceAreaSource);
 const normalizeTriggersSyncBars = /function normalizeDelta[\s\S]*?syncBars\(/.test(normalizeDeltaSource);
 const normalizeReturnsChange = /return\s+changed;/.test(normalizeDeltaSource);
+const normalizeReturnsRequestedDelta = /changed:\s*clamped\s*!==\s*before/.test(normalizeDeltaSource);
+const syncBarsReceivesChangesOnly = /syncBars\(changed\)/.test(normalizeDeltaSource);
 
 const checks = [
   { name: 'CSS/JS/README 版本参数可解析', pass: Boolean(htmlCacheVersion) && Boolean(readmeCacheVersion) },
@@ -158,7 +190,10 @@ const checks = [
   { name: 'release.version 与 README 一致', pass: releaseVersionFromFile && readmeCacheVersion === releaseVersionFromFile },
   { name: 'UI 有 7 条同源状态条 DOM', pass: hasSevenBarDom && hasSevenValueDom && hasSevenDeltaDom },
   { name: 'syncBars 统一更新所有 7 条条宽度与 7 条数值文案', pass: syncBarsUpdatesAllBars && syncBarsUpdatesAllValues },
+  { name: 'statusBars 配置完整覆盖 7 个状态键', pass: hasSevenStatusKeysInBars && hasDefinedSevenStatusBars },
   { name: '同步函数提供变化反馈状态（changed/statusFlash/data-delta）', pass: hasVisibleChangeFeedback },
+  { name: '选择点击必须经过 normalizeDelta 与 delta 输入对象', pass: hasChoiceChoiceDeltaInput && hasChoiceChoiceNormalizeDeltaCall },
+  { name: 'normalizeDelta 返回变更细目并触发统一 syncBars(changed)', pass: normalizeReturnsRequestedDelta && normalizeReturnsChange && syncBarsReceivesChangesOnly },
   { name: 'normalizeDelta 会触发条目刷新', pass: normalizeTriggersSyncBars },
   { name: 'normalizeDelta 返回变化细目', pass: normalizeReturnsChange },
   { name: '#hud: justify-content:flex-start', pass: hudFlexStartForMobileMatch },
