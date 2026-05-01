@@ -4,7 +4,7 @@
 
 ## 可玩方式
 
-- 公网游玩：`https://dengxiaocheng.github.io/sun/`（请先确认 GitHub Pages 已配置并完成发布，配置后应返回可用页面）。
+- 公网游玩（已验证）：`https://dengxiaocheng.github.io/sun/`
 - 本地启动（推荐）：
 
 ```bash

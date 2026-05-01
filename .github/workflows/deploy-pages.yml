@@ -24,6 +24,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Ensure GitHub Pages source is configured
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          create_payload='{"source":{"branch":"main","path":"/"}}'
+          api_url="https://api.github.com/repos/${{ github.repository }}/pages"
+          echo "Preparing GitHub Pages source to branch=main path=/ ..."
+          if ! curl -sSf -o /tmp/pages-current.json -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$api_url" >/dev/null 2>&1; then
+            curl -sSf -X POST "$api_url" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "Content-Type: application/json" \
+              -d "$create_payload" >/tmp/pages-ensure.json
+          else
+            curl -sSf -X PATCH "$api_url" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "Content-Type: application/json" \
+              -d "$create_payload" >/tmp/pages-ensure.json
+          fi
+          echo "Pages configuration payload:"
+          cat /tmp/pages-ensure.json
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
