@@ -18,10 +18,10 @@
   const barA = document.getElementById('barA');
   const barM = document.getElementById('barM');
   const barP = document.getElementById('barP');
-  const statusLabelR = document.getElementById('statusR');
-  const statusLabelB = document.getElementById('statusB');
-  const statusLabelT = document.getElementById('statusT');
-  const statusLabelE = document.getElementById('statusE');
+  const barR = document.getElementById('barR');
+  const barB = document.getElementById('barB');
+  const barT = document.getElementById('barT');
+  const barE = document.getElementById('barE');
 
   const speaker = document.getElementById('speaker');
   const dialogText = document.getElementById('dialogText');
@@ -856,33 +856,13 @@
   }
 
   function syncBars() {
-    barA.style.setProperty('--v', `${state.values.A}%`);
-    barM.style.setProperty('--v', `${state.values.M}%`);
-    barP.style.setProperty('--v', `${state.values.P}%`);
-
-    if (statusLabelR) {
-      statusLabelR.textContent = `恢复值（R）: ${getStateLabel('R', state.values.R)}`;
-    }
-    if (statusLabelB) {
-      statusLabelB.textContent = `边界感（B）: ${getStateLabel('B', state.values.B)}`;
-    }
-    if (statusLabelT) {
-      statusLabelT.textContent = `亲密温度（T）: ${getStateLabel('T', state.values.T)}`;
-    }
-    if (statusLabelE) {
-      statusLabelE.textContent = `艺术回声（E）: ${getStateLabel('E', state.values.E)}`;
-    }
-  }
-
-  function getStateLabel(key, value) {
-    const levels = {
-      R: ['恢复不足，身体提醒暂停', '稍有疲惫，注意回稳', '恢复正常，行动可持续', '恢复充沛，状态较稳'],
-      B: ['边界薄弱，易失衡', '边界在尝试中', '边界渐稳，开始表达', '边界健康，能保护自己'],
-      T: ['沟通僵化，易误解', '有热度但不稳', '关系更可被听见', '信任较稳，互动更真诚'],
-      E: ['理解未落地，仍偏理想化', '有共鸣但不完整', '理解正在接近现实', '价值感更清晰，关系更稳']
-    }[key] || ['极低', '偏低', '平衡', '良好'];
-    const idx = value >= 70 ? 3 : value >= 45 ? 2 : value >= 25 ? 1 : 0;
-    return levels[idx];
+    if (barA) barA.style.setProperty('--v', `${state.values.A}%`);
+    if (barM) barM.style.setProperty('--v', `${state.values.M}%`);
+    if (barP) barP.style.setProperty('--v', `${state.values.P}%`);
+    if (barR) barR.style.setProperty('--v', `${state.values.R}%`);
+    if (barB) barB.style.setProperty('--v', `${state.values.B}%`);
+    if (barT) barT.style.setProperty('--v', `${state.values.T}%`);
+    if (barE) barE.style.setProperty('--v', `${state.values.E}%`);
   }
 
   function applySceneIntro(scene) {

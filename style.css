@@ -177,37 +177,40 @@ button {
   display: flex;
   gap: 8px;
   padding: 10px;
-  align-items: center;
+  align-items: flex-start;
+  gap: 6px;
   z-index: 10;
 }
 
 .bars {
   flex: 1;
   display: grid;
-  gap: 5px;
+  gap: 4px;
+  grid-template-columns: 1fr;
 }
 
 .meter {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--muted);
   background: var(--panel-soft);
   border-radius: 9px;
-  padding: 4px 6px;
+  padding: 3px 6px;
   line-height: 1;
 }
 
 .meter span {
-  width: 56px;
+  width: 58px;
   flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .meter i {
   position: relative;
   display: block;
-  height: 7px;
+  height: 6px;
   flex: 1;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.12);
@@ -366,6 +369,20 @@ button {
 @media (max-width: 600px) {
   #hud {
     justify-content: flex-start;
+  }
+
+  .bars {
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 6px;
+  }
+
+  .meter {
+    font-size: 9px;
+    padding: 3px 5px;
+  }
+
+  .meter span {
+    width: 52px;
   }
 
   #choiceArea:not(:empty) {

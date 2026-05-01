@@ -49,6 +49,10 @@ const drawDebugSlice = (() => {
   return files.js.slice(start, end > start ? end : files.js.length);
 })();
 const debugTupleTextPattern = /A:\s*\$\{state\.values\.A\}|M:\s*\$\{state\.values\.M\}|P:\s*\$\{state\.values\.P\}|R:\s*\$\{state\.values\.R\}|B:\s*\$\{state\.values\.B\}|T:\s*\$\{state\.values\.T\}|E:\s*\$\{state\.values\.E\}/;
+const chineseStatusLabels = ['焦虑雾', '动能', '复习进度', '恢复', '边界感', '关系温度', '理解/共情'];
+const hasChineseStatusLabels = (targetHtml) => chineseStatusLabels.every((label) => targetHtml.includes(label));
+const hudTuplePattern = /[ABPMRTE]\\s*[:：]\\s*\\d{1,3}/;
+const jsTupleTemplatePattern = /[`'\"].*?(?:A|M|P|R|B|T|E)\\s*[:：]\\s*\\$\\{state\\.values\\.(?:A|M|P|R|B|T|E)\\}.*?[`'\"']/;
 
 const cacheVersionPattern = /[a-zA-Z0-9._-]{4,64}/;
 const htmlStyleMatch = files.html.match(new RegExp(`style\\.css\\?v=(${cacheVersionPattern.source})`));
@@ -102,7 +106,15 @@ const checks = [
   },
   {
     name: '源码不再保留通过模板字符串输出 A/M/P/R/B/T/E 状态裸数值',
-    pass: !debugTupleTextPattern.test(files.js),
+    pass: !debugTupleTextPattern.test(files.js) && !jsTupleTemplatePattern.test(files.js),
+  },
+  {
+    name: '七个中文状态标签均存在',
+    pass: hasChineseStatusLabels(files.html),
+  },
+  {
+    name: '主界面不出现裸 `A:52`/`A:${state.values.A}` 类态码数字展示',
+    pass: !hudTuplePattern.test(files.html) && !/（(?:A|M|P|R|B|T|E)）/.test(files.html),
   },
   { name: 'title/hud/systemPanel/storage 关键层有高优先级 hidden CSS 覆盖', pass: /#titleScreen\.hidden,\s*#hud\.hidden,\s*#systemPanel\.hidden,\s*#storagePanel\.hidden\s*\{[\s\S]*?display:\s*none\s*!important\s*;[\s\S]*?\}/.test(files.css) },
   { name: '进入游戏会隐藏并禁用标题层点击', pass: /function enterPlayMode\([\s\S]*?titleScreen\.classList\.add\('hidden'\)[\s\S]*?titleScreen\.style\.pointerEvents\s*=\s*'none'/m.test(files.js) },
