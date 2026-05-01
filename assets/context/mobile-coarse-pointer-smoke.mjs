@@ -1,14 +1,56 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
+import { execSync } from 'node:child_process';
+
+const repoRoot = '/home/openclaw/codex-projects/sun';
 
 const files = {
-  html: fs.readFileSync('/home/openclaw/codex-projects/sun/index.html', 'utf8'),
-  js: fs.readFileSync('/home/openclaw/codex-projects/sun/game.js', 'utf8'),
-  css: fs.readFileSync('/home/openclaw/codex-projects/sun/style.css', 'utf8'),
+  html: fs.readFileSync(`${repoRoot}/index.html`, 'utf8'),
+  js: fs.readFileSync(`${repoRoot}/game.js`, 'utf8'),
+  css: fs.readFileSync(`${repoRoot}/style.css`, 'utf8'),
+  readme: fs.readFileSync(`${repoRoot}/README.md`, 'utf8'),
 };
 
+const currentReleaseMatch = (() => {
+  try {
+    return execSync('git rev-parse --short HEAD', {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return '';
+  }
+})();
+
+const htmlStyleMatch = files.html.match(/style\.css\?v=([a-zA-Z0-9_-]{6,64})/);
+const htmlGameMatch = files.html.match(/game\.js\?v=([a-zA-Z0-9_-]{6,64})/);
+const readmeStyleMatch = files.readme.match(/`style\.css\?v=([a-zA-Z0-9_-]{6,64})`/);
+const readmeGameMatch = files.readme.match(/`game\.js\?v=([a-zA-Z0-9_-]{6,64})`/);
+
+const htmlCacheVersion = htmlStyleMatch && htmlGameMatch && htmlStyleMatch[1] === htmlGameMatch[1] ? htmlStyleMatch[1] : '';
+const readmeCacheVersion = readmeStyleMatch && readmeGameMatch && readmeStyleMatch[1] === readmeGameMatch[1]
+  ? readmeStyleMatch[1]
+  : '';
+const expectedCacheVersion = currentReleaseMatch || htmlCacheVersion || readmeCacheVersion;
+
 const checks = [
-  { name: 'CSS/JS 资源带版本 query', pass: /style\.css\?v=dec7e0b1/.test(files.html) && /game\.js\?v=dec7e0b1/.test(files.html) },
+  { name: 'CSS/JS 资源版本参数可解析', pass: Boolean(htmlCacheVersion) && Boolean(readmeCacheVersion) },
+  {
+    name: 'index 与 README 的版本参数一致',
+    pass: htmlCacheVersion && readmeCacheVersion && htmlCacheVersion === readmeCacheVersion,
+  },
+  {
+    name: 'index 与 README 版本参数一致于发布版本',
+    pass: Boolean(expectedCacheVersion) && htmlCacheVersion === expectedCacheVersion && readmeCacheVersion === expectedCacheVersion,
+  },
+  {
+    name: 'CSS/JS 资源 query 与发布版本一致',
+    pass: /style\.css\?v=/.test(files.html)
+      && /game\.js\?v=/.test(files.html)
+      && htmlStyleMatch[1] === htmlGameMatch[1]
+      && htmlStyleMatch[1] === expectedCacheVersion,
+  },
   { name: 'title screen 有开始按钮', pass: /id="titleScreen"[\s\S]*id="startBtn"/.test(files.html) },
   { name: '开始按钮绑定点击与触控事件', pass: /bindStartButton\(startBtn,[\s\S]*\)\s*;/.test(files.js) && /touchend/.test(files.js) },
   { name: 'title/hud/systemPanel/storage/portraitLock 关键层有高优先级 hidden CSS 覆盖', pass: /#titleScreen\.hidden,\s*#hud\.hidden,\s*#systemPanel\.hidden,\s*#storagePanel\.hidden,\s*#portraitLock\.hidden\s*\{[\s\S]*?display:\s*none\s*!important\s*;[\s\S]*?\}/.test(files.css) },
