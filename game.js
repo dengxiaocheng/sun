@@ -702,6 +702,8 @@
   let imageCache = {};
   let rafId;
   let pressTimer;
+  let portraitLockTimer;
+  const PORTRAIT_LOCK_HINT_DURATION_MS = 2200;
 
   function resolveImagePath(path) {
     return `assets/images/${path}`;
@@ -713,16 +715,34 @@
     return media || geometry;
   }
 
+  function hidePortraitLock() {
+    if (portraitLockTimer) {
+      clearTimeout(portraitLockTimer);
+      portraitLockTimer = null;
+    }
+    portraitLock.classList.remove('open');
+    portraitLock.setAttribute('aria-hidden', 'true');
+    portraitLock.setAttribute('inert', '');
+  }
+
+  function showPortraitLockHint() {
+    hidePortraitLock();
+    portraitLock.classList.add('open');
+    portraitLock.removeAttribute('inert');
+    portraitLock.setAttribute('aria-hidden', 'false');
+
+    portraitLockTimer = setTimeout(() => {
+      hidePortraitLock();
+    }, PORTRAIT_LOCK_HINT_DURATION_MS);
+  }
+
   function enterPlayMode() {
     titleScreen.classList.add('hidden');
     titleScreen.setAttribute('aria-hidden', 'true');
     titleScreen.setAttribute('inert', '');
     titleScreen.style.pointerEvents = 'none';
 
-    portraitLock.classList.remove('open');
-    portraitLock.setAttribute('aria-hidden', 'true');
-    portraitLock.setAttribute('inert', '');
-    portraitLock.style.pointerEvents = 'none';
+    hidePortraitLock();
   }
 
   function loadImage(path) {
@@ -1262,11 +1282,18 @@
   }
 
   function checkOrientation() {
-    if (state.running) return;
+    if (state.running) {
+      hidePortraitLock();
+      return;
+    }
 
     const portrait = isPortraitLayout();
-    portraitLock.classList.toggle('open', !portrait);
-    portraitLock.setAttribute('aria-hidden', String(portrait));
+    if (portrait) {
+      hidePortraitLock();
+      return;
+    }
+
+    showPortraitLockHint();
   }
 
   window.addEventListener('orientationchange', checkOrientation);

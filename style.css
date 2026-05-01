@@ -348,6 +348,14 @@ button {
   display: grid;
 }
 
+#portraitLock {
+  pointer-events: none;
+}
+
+#portraitLock.open {
+  pointer-events: none;
+}
+
 #portraitLock .panel {
   width: min(84%, 320px);
   text-align: center;
