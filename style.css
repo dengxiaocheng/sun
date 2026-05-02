@@ -153,10 +153,10 @@ button {
 }
 
 .iconBtn {
-  width: 44px;
+  width: 40px;
   min-height: 44px;
   padding: 0;
-  font-size: 20px;
+  font-size: 19px;
 }
 
 #hud {
@@ -336,6 +336,14 @@ button {
 
 #storagePanel {
   inset: 56px 10px auto 10px;
+  max-height: min(62vh, 400px);
+  overflow: auto;
+}
+
+#systemPanel {
+  inset: 56px 10px auto 10px;
+  max-height: min(62vh, 400px);
+  overflow: auto;
 }
 
 #saveButtons,
@@ -352,13 +360,16 @@ button {
 }
 
 #dialogWrapper {
-  margin: 10px;
+  margin: 8px 10px 4px;
   background: linear-gradient(180deg, rgba(8, 8, 16, 0.35), rgba(10, 10, 18, 0.56));
   border: 1px solid rgba(242, 233, 219, 0.28);
   border-radius: 12px;
-  padding: 12px;
+  padding: 10px 11px 12px;
   position: relative;
-  min-height: 150px;
+  min-height: 118px;
+  max-height: 180px;
+  transform: translateY(-8px);
+  overflow: hidden;
   backdrop-filter: blur(2px);
 }
 
@@ -371,8 +382,10 @@ button {
 #dialogText {
   color: #f6e8da;
   font-size: 18px;
-  line-height: 1.55;
-  min-height: 64px;
+  line-height: 1.45;
+  min-height: 56px;
+  max-height: 114px;
+  overflow: hidden;
   white-space: pre-wrap;
 }
 

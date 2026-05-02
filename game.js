@@ -58,6 +58,7 @@
   const dialogWrapper = document.getElementById('dialogWrapper');
 
   const menuBtn = document.getElementById('menuBtn');
+  const storageBtn = document.getElementById('storageBtn');
   const historyBtn = document.getElementById('historyBtn');
   const systemPanel = document.getElementById('systemPanel');
   const storagePanel = document.getElementById('storagePanel');
@@ -1297,14 +1298,10 @@
       loadButtons.appendChild(loadBtn);
     }
 
-    const openStorageBtn = document.createElement('button');
-    openStorageBtn.textContent = '打开存档';
-    openStorageBtn.style.marginTop = '4px';
-    openStorageBtn.addEventListener('click', () => {
+    storageBtn.addEventListener('click', () => {
       systemPanel.classList.add('hidden');
       storagePanel.classList.toggle('hidden');
     });
-    menuBtn.parentElement.appendChild(openStorageBtn);
 
     menuBtn.addEventListener('click', () => {
       storagePanel.classList.add('hidden');
