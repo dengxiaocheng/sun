@@ -27,6 +27,7 @@
 - 咨询线：在 `C4N04` 选择“预约咨询”后，进入 `C4N05`，并在后续降低过载风险，影响《低频祷告》/《雾灯》判定。
 - 固定陪伴线：`C3N05` 判定边界感达到阈值后标记，`C5N05` 若 `E>=55 && B>=40` 会追加提示；两者可触发《低频祷告》更高优先级。
 - 断电自救线：在 `C6N04` 选“提出暂时拉开距离”或 `C7N02` 选“直接拒绝”后，会偏向《断电自救》结局。
+- 家乡旅途支线（新增）：在 `C7N05` 选择“先去见他（支线）”后进入 `H00`-`H04`，按旅途 `trip` 状态结算，影响支线结局《长路抵达》《热水和出站口》《到达，但不献祭》《过载抵达》。
 
 当前发布版本使用缓存失效参数：
 
@@ -48,6 +49,13 @@ python3 -m http.server 4173
 ```text
 http://127.0.0.1:4173/
 ```
+
+### 文档资源
+
+- 支线文档（与本次 release 资产一致）：
+  - `docs/sun_hometown_route/README.md`
+  - `docs/sun_hometown_route/03_node_flow.md`
+  - `docs/sun_hometown_route/06_endings_and_mainline_integration.md`
 
 ## 本地验证（移动端 / coarse-pointer）
 
@@ -93,6 +101,7 @@ curl -sS -o /dev/null -w "public game -> %{http_code}\n" https://dengxiaocheng.g
 - 本仓库正文游戏本体在 `game.js`/`index.html`/`style.css`。对应美术资源清单在 `assets/images/manifest.json`。
 - 完整图片与素材定义在 `雾线下的译者_完整游戏文档_图片资源整合包.zip`，若本地缺少图像文件可从该压缩包解压 `assets/images/` 到仓库同名目录后启动以获得完整视觉。
 - `assets` 目录下保留的是该整合包的文本化资源清单，当前仓库不要求额外构建流程。
+- `docs/sun_hometown_route/` 为本次实现依据 release 资产文档同步落库的最小支线资料集。
 
 ## 控制
 

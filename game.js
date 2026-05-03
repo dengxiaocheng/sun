@@ -50,6 +50,8 @@
   const STATUS_FLASH_MS = 800;
 
   const STATUS_LABELS = new Set(statusBars.map((item) => item.key));
+  const DEFAULT_TRIP_STATE = { U: 60, F: 75, C: 80, L: 20, K: 40 };
+  const HOMETOWN_TRIP_PATH = ['H00', 'H01', 'H02', 'H03', 'H04', 'H05', 'H06', 'H07', 'H08'];
 
   const speaker = document.getElementById('speaker');
   const dialogText = document.getElementById('dialogText');
@@ -73,6 +75,139 @@
 
   const saveButtons = document.getElementById('saveButtons');
   const loadButtons = document.getElementById('loadButtons');
+
+  function resetTripState(target = state) {
+    target.trip = { ...DEFAULT_TRIP_STATE };
+  }
+
+  function ensureTripState(target = state) {
+    if (!target.trip || typeof target.trip !== 'object') {
+      resetTripState(target);
+      return;
+    }
+
+    const next = { ...target.trip };
+    Object.keys(DEFAULT_TRIP_STATE).forEach((key) => {
+      const value = Number(next[key]);
+      next[key] = Number.isFinite(value) ? value : DEFAULT_TRIP_STATE[key];
+    });
+    target.trip = next;
+  }
+
+  function applyTripDelta(target, delta = {}) {
+    if (!delta || typeof delta !== 'object') return;
+    ensureTripState(target);
+
+    Object.entries(delta).forEach(([key, value]) => {
+      if (!Object.prototype.hasOwnProperty.call(DEFAULT_TRIP_STATE, key)) return;
+      const num = Number(value);
+      if (!Number.isFinite(num)) return;
+      const before = Number(target.trip[key]) || 0;
+      const next = Math.max(0, Math.min(100, before + Math.round(num)));
+      target.trip[key] = next;
+    });
+  }
+
+  function setHometownTripResult(target, result) {
+    target.flags = target.flags || {};
+    target.flags.hometownTripResult = result;
+    target.flags.hometownTripActive = false;
+    target.flags.hometownTripSettled = false;
+  }
+
+  function resetHometownTripMetadata(target = state) {
+    if (!target.flags) target.flags = {};
+    target.flags.hometownTripActive = false;
+    target.flags.hometownTripStarted = false;
+    target.flags.hometownTripSettled = false;
+    target.flags.hometownTripResult = null;
+    target.flags.hometownTripScene = null;
+    target.flags.hometownTripProgress = 0;
+    target.flags.hometownTripCurrentScene = null;
+    target.flags.hometownTripOverload = false;
+    target.flags.hometownTripFinalTrip = null;
+  }
+
+  function markHometownTripStep(target = state, sceneId) {
+    if (!target.flags) target.flags = {};
+    if (!target.flags.hometownTripActive) {
+      target.flags.hometownTripActive = true;
+      target.flags.hometownTripStarted = true;
+    }
+
+    target.flags.hometownTripCurrentScene = sceneId;
+    const index = HOMETOWN_TRIP_PATH.indexOf(sceneId);
+    if (index >= 0) {
+      target.flags.hometownTripProgress = Math.max(target.flags.hometownTripProgress || 0, index + 1);
+    } else {
+      target.flags.hometownTripProgress = (target.flags.hometownTripProgress || 0) + 1;
+    }
+  }
+
+  function clearTripState(target = state) {
+    target.trip = null;
+    resetHometownTripMetadata(target);
+  }
+
+  function settleHometownTrip(target = state) {
+    if (!target.flags || !target.flags.hometownTripResult || target.flags.hometownTripSettled) {
+      return false;
+    }
+
+    ensureTripState(target);
+    const trip = target.trip || DEFAULT_TRIP_STATE;
+    const tripProgress = Number(target.flags.hometownTripProgress) || 0;
+    const completed = tripProgress >= HOMETOWN_TRIP_PATH.length;
+    const delta = {};
+
+    if (!completed || trip.F < 20 || trip.U < 20) {
+      target.flags.hometownTripOverload = true;
+    }
+
+    if (completed) {
+      if (trip.U >= 60) {
+        delta.A = (delta.A || 0) - 5;
+        delta.M = (delta.M || 0) + 5;
+      }
+      if (trip.F >= 50) {
+        delta.R = (delta.R || 0) + 10;
+      }
+      if (trip.F < 25) {
+        delta.R = (delta.R || 0) - 15;
+        delta.A = (delta.A || 0) + 10;
+      }
+      if (trip.C < 15) {
+        delta.A = (delta.A || 0) + 5;
+      }
+      if (trip.K >= 70) {
+        delta.T = (delta.T || 0) + 15;
+        delta.E = (delta.E || 0) + 10;
+      }
+      if (trip.K < 30) {
+        delta.T = (delta.T || 0) - 10;
+        delta.A = (delta.A || 0) + 10;
+      }
+      if (target.flags.hometownTripResult === 'warmArrival' && target.values.B >= 60) {
+        delta.B = (delta.B || 0) + 10;
+        delta.T = (delta.T || 0) + 10;
+      }
+      delta.M = (delta.M || 0) + 15;
+    }
+
+    target.flags.hometownTripFinalTrip = {
+      U: trip.U,
+      F: trip.F,
+      C: trip.C,
+      L: trip.L,
+      K: trip.K,
+    };
+
+    normalizeDelta(target, delta);
+    target.flags.hometownTripSettled = true;
+    target.flags.hometownTripActive = false;
+    target.trip = null;
+    return true;
+  }
 
   const scenes = {
     P00: {
@@ -613,12 +748,402 @@
           state.flags.safetyAlert = true;
         }
       },
-      choices: [{ text: '进入终章', next: 'END01' }],
+      choices: [
+        {
+          text: '继续主线',
+          delta: { M: 4 },
+          next: 'END01',
+        },
+        {
+          text: '先去见他（支线）',
+          onChoose: (state) => {
+            resetTripState(state);
+            state.flags.hometownTripOverload = false;
+            state.flags.hometownTripProgress = 0;
+            state.flags.hometownTripCurrentScene = 'H00';
+            state.flags.hometownTripFinalTrip = null;
+            state.flags.hometownTripActive = true;
+            state.flags.hometownTripResult = null;
+            state.flags.hometownTripStarted = true;
+          },
+          next: 'H00',
+        },
+      ],
+    },
+    H00: {
+      id: 'H00',
+      title: '支线 · 行前一夜：打包',
+      bg: 'backgrounds/bg_dorm_0230.png',
+      actor: 'characters/char_smx_exam_sheet.png',
+      onEnter(state) {
+        markHometownTripStep(state, 'H00');
+      },
+      lines: [
+        '她把包往床上倒了一圈，试图把可控和不可控分开。',
+        '长途不是“去见你”一句话，而是八小时要被自己照顾完。',
+      ],
+      choices: [
+        {
+          text: '熬夜反复查路线，先把不安先处理掉',
+          tripDelta: { U: 5, C: -15 },
+          delta: { A: 10, R: -5 },
+          next: 'H01',
+        },
+        {
+          text: '写一张简洁路线单，少一点焦虑',
+          tripDelta: { U: 15 },
+          delta: { A: -5, B: 5 },
+          next: 'H01',
+        },
+        {
+          text: '给他发一句“你能不能到站接我”',
+          tripDelta: { K: 12, U: 5 },
+          delta: { B: 8, A: 5 },
+          next: 'H01',
+        },
+        {
+          text: '明天再说：先不准备',
+          tripDelta: { U: -20, A: 10 },
+          delta: { A: 8, R: -6 },
+          next: 'H01',
+        },
+      ],
+    },
+    H01: {
+      id: 'H01',
+      title: '支线 · 学校门口',
+      bg: 'backgrounds/bg_campus_morning_fog.png',
+      actor: 'characters/char_smx_daily_sheet.png',
+      onEnter(state) {
+        markHometownTripStep(state, 'H01');
+      },
+      lines: [
+        '出租车门合上的一瞬间，熟悉的灯条被甩在后面。',
+        '她先把呼吸放慢到“能走完下一段”的长度。',
+      ],
+      choices: [
+        {
+          text: '我太夸张了，为了见他跑这么远',
+          tripDelta: { C: -8 },
+          delta: { A: 10, B: -5 },
+          next: 'H02',
+        },
+        {
+          text: '我有权被认真对待，先到地铁站',
+          tripDelta: { B: 10, M: 5 },
+          delta: { B: 10, M: 5 },
+          next: 'H02',
+        },
+        {
+          text: '不评价整趟人生，先看一次导航',
+          tripDelta: { U: 5, C: -2 },
+          delta: { A: -5 },
+          next: 'H02',
+        },
+        {
+          text: '刷恋爱帖子分散恐惧',
+          tripDelta: { C: -12, K: -5 },
+          delta: { A: 15, T: -5 },
+          next: 'H02',
+        },
+      ],
+    },
+    H02: {
+      id: 'H02',
+      title: '支线 · 地铁去机场',
+      bg: 'backgrounds/bg_title_powerline_mist.png',
+      actor: 'characters/char_smx_exam_sheet.png',
+      onEnter(state) {
+        markHometownTripStep(state, 'H02');
+      },
+      lines: [
+        '地铁像一节延长的隧道，节奏稳得可怕。',
+        '每一站都在提醒：她只要继续下一格。',
+      ],
+      choices: [
+        {
+          text: '背 15 个单词撑过去',
+          tripDelta: { F: -5, C: -5 },
+          delta: { P: 3 },
+          next: 'H03',
+        },
+        {
+          text: '听白噪音闭眼休息',
+          tripDelta: { F: 5, A: -8 },
+          delta: { A: -8, R: 4 },
+          next: 'H03',
+        },
+        {
+          text: '看窗外，借景呼吸',
+          tripDelta: { M: 3, A: -5 },
+          delta: { M: 3, A: -5 },
+          next: 'H03',
+        },
+        {
+          text: '反复看他有没有回',
+          tripDelta: { C: -8, A: 10, U: -5 },
+          delta: { A: 10 },
+          next: 'H03',
+        },
+      ],
+    },
+    H03: {
+      id: 'H03',
+      title: '支线 · 飞机候机',
+      bg: 'backgrounds/bg_rooftop_evening.png',
+      actor: 'characters/char_dxc_daily_sheet.png',
+      onEnter(state) {
+        markHometownTripStep(state, 'H03');
+      },
+      lines: [
+        '机场候机像一处放大耐受的走廊，补给、充电和确认同时出现。',
+        '她知道如果不主动说清，她只会把不安当成答案。',
+      ],
+      choices: [
+        {
+          text: '找充电口，把电量补到位',
+          tripDelta: { C: 30 },
+          delta: { A: -4, M: 3 },
+          next: 'H04',
+        },
+        {
+          text: '候机椅坐下，先把呼吸变慢',
+          tripDelta: { F: 10, A: -5 },
+          delta: { R: 6 },
+          next: 'H04',
+        },
+        {
+          text: '给他发一句到机场了，我有点久站',
+          tripDelta: { K: 10, C: -6 },
+          delta: { B: 4 },
+          next: 'H04',
+        },
+        {
+          text: '不停盯登机口屏，越看越焦躁',
+          tripDelta: { U: 10, A: 5, C: -4 },
+          delta: { A: 5 },
+          next: 'H04',
+        },
+      ],
+    },
+    H04: {
+      id: 'H04',
+      title: '支线 · 飞机',
+      bg: 'backgrounds/bg_title_powerline_mist.png',
+      actor: 'characters/char_smx_exam_sheet.png',
+      onEnter(state) {
+        markHometownTripStep(state, 'H04');
+      },
+      lines: [
+        '飞机不能联网，关系也不能被即时确认。',
+        '她开始把每一段想法写下来，而不是拿自己的价值去换一句“他在吗”。',
+      ],
+      choices: [
+        {
+          text: '睡一会儿，给自己补一段体力',
+          tripDelta: { F: 20, A: -5 },
+          delta: { A: -5, R: 6 },
+          next: 'H05',
+        },
+        {
+          text: '看考研资料，白天在空中也得努力',
+          tripDelta: { F: -10 },
+          delta: { P: 5 },
+          next: 'H05',
+        },
+        {
+          text: '写一封不一定发出去的信',
+          tripDelta: { B: 10, M: 10 },
+          delta: { B: 8, M: 4 },
+          next: 'H05',
+        },
+        {
+          text: '想象最坏结果，替自己加码惩罚',
+          tripDelta: { A: 20, F: -2 },
+          delta: { A: 15 },
+          next: 'H05',
+        },
+      ],
+    },
+    H05: {
+      id: 'H05',
+      title: '支线 · 目的省份机场',
+      bg: 'backgrounds/bg_exam_gate_dawn.png',
+      actor: 'characters/char_smx_study_sheet.png',
+      onEnter(state) {
+        markHometownTripStep(state, 'H05');
+      },
+      lines: [
+        '下了飞机，机场入口像另一套规则。',
+        '手机电量和心跳都掉了一个档，下一站她要开始靠自己走出来。',
+      ],
+      choices: [
+        {
+          text: '先联系他，确认接站和车次',
+          tripDelta: { C: -8, K: 10 },
+          delta: { B: 2, T: 2 },
+          next: 'H06',
+        },
+        {
+          text: '先去地铁口再联系，别把电掉太快',
+          tripDelta: { U: 5, C: -3 },
+          delta: { A: -4 },
+          next: 'H06',
+        },
+        {
+          text: '原地慌十分钟：越等越累',
+          tripDelta: { U: -10, A: 10 },
+          delta: { A: 10 },
+          next: 'H06',
+        },
+        {
+          text: '问工作人员问路，先把方向定下来',
+          tripDelta: { U: 10, M: 5, A: -5 },
+          delta: { B: 6, M: 4 },
+          next: 'H06',
+        },
+      ],
+    },
+    H06: {
+      id: 'H06',
+      title: '支线 · 地铁去火车站',
+      bg: 'backgrounds/bg_library_stack.png',
+      actor: 'characters/char_smx_daily_sheet.png',
+      onEnter(state) {
+        markHometownTripStep(state, 'H06');
+      },
+      lines: [
+        '第二段地铁更慢更挤，肩带开始摩擦。',
+        '她开始知道，关系要落地，不是为了消解每一份恐慌。',
+      ],
+      choices: [
+        {
+          text: '靠边站稳，闭眼听报站',
+          tripDelta: { F: 5, A: -5 },
+          delta: { A: -5, R: 3 },
+          next: 'H07',
+        },
+        {
+          text: '继续背单词，先把复习做完',
+          tripDelta: { F: -8 },
+          delta: { P: 3, A: 4 },
+          next: 'H07',
+        },
+        {
+          text: '给他发一句“我现在很累”',
+          tripDelta: { B: 5, K: 10 },
+          delta: { B: 5, T: 2 },
+          next: 'H07',
+        },
+        {
+          text: '刷短视频麻痹自己',
+          tripDelta: { C: -12, A: -3 },
+          delta: { A: -3 },
+          next: 'H07',
+        },
+      ],
+    },
+    H07: {
+      id: 'H07',
+      title: '支线 · 火车开往家乡附近',
+      bg: 'backgrounds/bg_rooftop_evening.png',
+      actor: 'characters/char_dxc_tender_sheet.png',
+      onEnter(state) {
+        markHometownTripStep(state, 'H07');
+      },
+      lines: [
+        '火车开出城市，窗外先是水泥，再是树，再是低矮房子。',
+        '她第一次敢把“快到了”当成一种可以停下来的许可。',
+      ],
+      choices: [
+        {
+          text: '睡一会儿，给自己补一段体力',
+          tripDelta: { F: 15, A: -5 },
+          delta: { R: 2 },
+          next: 'H08',
+        },
+        {
+          text: '看窗外，呼吸和节奏一起变慢',
+          tripDelta: { M: 10, A: -15 },
+          delta: { M: 4, A: -15 },
+          next: 'H08',
+        },
+        {
+          text: '写下“我已经走到这里了”',
+          tripDelta: { M: 15, A: -2 },
+          delta: { M: 5 },
+          next: 'H08',
+        },
+        {
+          text: '给他发窗外照片，先试一次温和接近',
+          tripDelta: { T: 5, K: 5 },
+          delta: { T: 5 },
+          next: 'H08',
+        },
+      ],
+    },
+    H08: {
+      id: 'H08',
+      title: '支线 · 小站见面',
+      bg: 'backgrounds/bg_bus_stop_rain.png',
+      actor: 'characters/char_dxc_tender_sheet.png',
+      onEnter(state) {
+        markHometownTripStep(state, 'H08');
+      },
+      lines: [
+        '站台的风比消息更冷，出站口却亮着一盏黄灯。',
+        '她把一句开场话放轻：今天我先把自己的状态放在前面。',
+      ],
+      choices: [
+        {
+          text: '他在出站口等我，先把今天收起来',
+          tripDelta: { K: 20, F: 4, U: 4, C: -2 },
+          delta: { T: 15, B: 10, E: 8, R: 5 },
+          onChoose: (state) => {
+            setHometownTripResult(state, 'warmArrival');
+            state.flags.hometownTripScene = 'warm';
+          },
+          next: 'END01',
+        },
+        {
+          text: '他说“到时候看吧”，我先自己订房',
+          tripDelta: { K: -12, F: 2, U: -2 },
+          delta: { B: 12, A: 2, R: 6 },
+          onChoose: (state) => {
+            setHometownTripResult(state, 'selfCare');
+            state.flags.hometownTripScene = 'selfCare';
+          },
+          next: 'END01',
+        },
+        {
+          text: '他先带我去吃点饭再休息',
+          tripDelta: { K: 10, F: 6, U: 4 },
+          delta: { T: 8, B: 5, R: 4 },
+          onChoose: (state) => {
+            setHometownTripResult(state, 'warmArrival');
+            state.flags.hometownTripScene = 'warm';
+          },
+          next: 'END01',
+        },
+        {
+          text: '我今天真的很累，先休息',
+          tripDelta: { K: -8, F: 4, U: 3 },
+          delta: { B: 15, A: 2 },
+          onChoose: (state) => {
+            setHometownTripResult(state, 'selfCare');
+            state.flags.hometownTripScene = 'selfCare';
+          },
+          next: 'END01',
+        },
+      ],
     },
     END01: {
       id: 'END01',
       title: '终章 · 雾线之后',
       bg: 'backgrounds/bg_exam_gate_dawn.png',
+      onEnter(state) {
+        settleHometownTrip(state);
+      },
       lines: ['考试清晨，雾线边缘有一点暖黄。', '她听见自己：害怕还是会来，但我先走出门。'],
       choices: [
         { text: '我还是害怕', delta: { A: 3 }, next: 'END02' },
@@ -673,6 +1198,42 @@
   };
 
   const ENDINGS = {
+    hometownArrival: {
+      title: '《长路抵达》',
+      image: 'cg/cg_ending_low_prayer.png',
+      lines: [
+        '她走完了长路，却没把自己推着过线，',
+        '而是把每一段路都当作“照顾自己也能去见你”。',
+        '这条线没有神化任何人，只把可承接的关系放在现实里。',
+      ],
+    },
+    hometownArrivalWarm: {
+      title: '《热水和出站口》',
+      image: 'cg/cg_ending_foglamp.png',
+      lines: [
+        '他不再只说抽象情绪，而是具体接住她的疲惫。',
+        '热水、面包和一段可以继续的呼吸，',
+        '让她确信：被看到，往往先从“先休息”开始。',
+      ],
+    },
+    hometownSelfCare: {
+      title: '《到达，但不献祭》',
+      image: 'cg/cg_ending_foglamp.png',
+      lines: [
+        '她到站了，也不把今天变成证明。',
+        '她可以先关掉自己，不再把情绪硬扛。',
+        '下一段路由她决定走法和节奏。',
+      ],
+    },
+    hometownOverload: {
+      title: '《过载抵达》',
+      image: 'cg/cg_ending_poweroff.png',
+      lines: [
+        '她几乎没有力气继续解释。',
+        '这趟路没有赢，没有输，只是把过载从“必须证明”换成了“先让身体有边界”。',
+        '她还在途中，今天先回到自己身边。',
+      ],
+    },
     fogLamp: {
       title: '《雾灯》',
       image: 'cg/cg_ending_foglamp.png',
@@ -716,6 +1277,7 @@
     current: 'P00',
     lineIndex: 0,
     flags: {},
+    trip: null,
     history: [],
     badLoop: 0,
     values: {
@@ -803,11 +1365,13 @@
       badLoop: snapshot.badLoop || 0,
       values: snapshot.values || state.values,
       flags: snapshot.flags || {},
+      trip: snapshot.trip || null,
       history: snapshot.history || [],
       settings: { ...state.settings, ...(snapshot.settings || {}) },
       running: false,
       ended: false,
     });
+    ensureTripState(state);
     return true;
   }
 
@@ -819,6 +1383,7 @@
       badLoop: state.badLoop,
       values: state.values,
       flags: state.flags,
+      trip: state.trip,
       history: state.history,
       settings: state.settings,
       ts: Date.now(),
@@ -853,6 +1418,13 @@
       const v = Number(state.values[key]);
       state.values[key] = Math.max(0, Math.min(100, Math.round(v || 0)));
     });
+    if (state.trip) {
+      ensureTripState(state);
+      Object.keys(state.trip).forEach((key) => {
+        const v = Number(state.trip[key]);
+        state.trip[key] = Math.max(0, Math.min(100, Math.round(v || 0)));
+      });
+    }
   }
 
   function normalizeDelta(stateItem, delta) {
@@ -888,6 +1460,28 @@
 
   function getEnding() {
     const values = state.values;
+    const hometownProgress = Number(state.flags.hometownTripProgress) || 0;
+    const tripResult = state.flags.hometownTripResult;
+    const trip = state.flags.hometownTripFinalTrip || state.trip || DEFAULT_TRIP_STATE;
+
+    if (tripResult) {
+      if (hometownProgress < HOMETOWN_TRIP_PATH.length) {
+        return ENDINGS.hometownOverload;
+      }
+      if (state.flags.hometownTripOverload || values.A > 85 || trip.F < 20) {
+        return ENDINGS.hometownOverload;
+      }
+      if (tripResult === 'warmArrival' && values.T >= 60 && trip.K >= 75) {
+        return ENDINGS.hometownArrivalWarm;
+      }
+      if (tripResult === 'warmArrival') {
+        return ENDINGS.hometownArrival;
+      }
+      if (tripResult === 'selfCare') {
+        return ENDINGS.hometownSelfCare;
+      }
+    }
+
     if (
       (values.A >= 85 && values.R <= 25)
       || (state.badLoop >= 3 && !state.flags.consultation)
@@ -1099,7 +1693,9 @@
       button.addEventListener('click', async () => {
         const sceneBefore = scenes[state.current];
         const delta = option.delta || {};
+        const tripDelta = option.tripDelta || {};
         normalizeDelta(state, delta);
+        applyTripDelta(state, tripDelta);
         if (option.onChoose) option.onChoose(state);
         if (option.flagSet) {
           state.flags[option.flagSet] = true;
@@ -1127,6 +1723,7 @@
     state.lineIndex = 0;
     state.values = { A: 52, M: 38, P: 24, R: 42, B: 30, T: 55, E: 25 };
     state.flags = {};
+    clearTripState();
     state.badLoop = 0;
     state.history = [];
     state.ended = false;
@@ -1143,6 +1740,7 @@
     state.lineIndex = 0;
     state.values = { A: 52, M: 38, P: 24, R: 42, B: 30, T: 55, E: 25 };
     state.flags = {};
+    clearTripState();
     state.history = [];
     state.badLoop = 0;
     state.ended = false;

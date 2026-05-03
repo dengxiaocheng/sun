@@ -1,0 +1,21 @@
+{
+  "branch_name_suggestion": "sun",
+  "repo": "dengxiaocheng/sun",
+  "path": "docs/sun_hometown_route/",
+  "type": "design_docs_only",
+  "feature": "hometown_trip_route",
+  "documents": [
+    "00_BRANCH_README.md",
+    "01_route_overview.md",
+    "02_gameplay_integration.md",
+    "03_node_flow.md",
+    "04_state_and_balance.md",
+    "05_dialogue_and_anxiety_translation.md",
+    "06_endings_and_mainline_integration.md",
+    "07_image_resource_manifest.md",
+    "08_asset_layering_spec.md",
+    "09_dev_integration_no_code.md",
+    "10_reference_photo_notes.md",
+    "CHANGELOG.md"
+  ]
+}
