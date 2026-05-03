@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>雾线下的译者</title>
-    <link rel="stylesheet" href="./style.css?v=sun-release-20260503-status-bars-feedback-refresh" />
+    <link rel="stylesheet" href="./style.css?v=sun-release-20260503-hometown-branch-entry" />
   </head>
   <body>
     <main id="wrap">
@@ -20,7 +20,11 @@
             <p class="contentNotice">内容提示：本作含有焦虑、考研压力与亲密关系冷落话题。若你当前状态不适，请先暂停并寻求身边可依赖的人。</p>
             <div class="titleActions">
               <button id="startBtn" class="bigBtn">开始</button>
-              <button id="hometownQuickStartBtn" class="ghostBtn">先去见他（支线）</button>
+              <div class="hometownEntryCard" aria-live="polite">
+                <p class="hometownEntryTag">支线入口</p>
+                <button id="hometownQuickStartBtn" class="hometownEntryBtn">回家支线：先去见他</button>
+                <p class="hometownEntryHint">点击直接进入家乡旅途H00章节，先完成行前打包再出发。</p>
+              </div>
               <button id="loadBtn" class="ghostBtn">读取上次存档</button>
             </div>
           </div>
@@ -94,6 +98,6 @@
       </div>
     </main>
 
-    <script src="./game.js?v=sun-release-20260503-status-bars-feedback-refresh"></script>
+    <script src="./game.js?v=sun-release-20260503-hometown-branch-entry"></script>
   </body>
 </html>
