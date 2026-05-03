@@ -85,6 +85,28 @@ kill $!
 curl -sS -o /dev/null -w "public url -> %{http_code}\n" https://dengxiaocheng.github.io/sun/
 ```
 
+## release 资产核验（任务要求）
+
+- release 地址：`https://github.com/dengxiaocheng/sun/releases/tag/sun`
+- 目标资产名：`sun._._._.zip`
+- 目标大小：`51353472`
+- 目标 digest：`sha256:f0be642657321886653621397951c841277b8b254b8124aa12600f7eeb4a43c8`
+- 目标下载链接：`https://github.com/dengxiaocheng/sun/releases/download/sun/sun._._._.zip`
+
+强制读取/校验命令（无代理）：
+
+```bash
+unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy
+cd /home/openclaw/codex-projects/sun
+node assets/context/verify-github-release-asset.mjs
+```
+
+如果你已有同 digest 的缓存文件，可设置：
+
+```bash
+SUN_RELEASE_ASSET_FILE=/tmp/sun-release-direct-NeLvUI/sun._._._.zip node assets/context/verify-github-release-asset.mjs
+```
+
 快速验收（本次修复后）：
 
 ```bash

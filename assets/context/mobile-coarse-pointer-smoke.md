@@ -30,3 +30,20 @@ cd /home/openclaw/codex-projects/sun
 python3 -m http.server 4173
 # 打开 http://127.0.0.1:4173/ 并按上方步骤执行
 ```
+
+### 额外核验：GitHub release 资产
+
+1. 清空代理变量并执行：
+
+```bash
+unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy
+cd /home/openclaw/codex-projects/sun
+node assets/context/verify-github-release-asset.mjs
+```
+
+2. 输出应包含：
+
+- release API 可访问与 tag=sun。
+- asset 名称/大小/digest 与任务要求一致。
+- 资产被下载到临时目录并可解压读取 `02_images/manifest.json` 与 `01_docs/*`。
+- 当前本地实现与支线清单比对无缺口（应显示 `trip branch gap list: none`）。
