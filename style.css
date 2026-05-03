@@ -85,7 +85,9 @@ body {
 #titleScreen {
   display: grid;
   place-items: center;
-  background: linear-gradient(180deg, rgba(32, 22, 45, 0.9), rgba(10, 10, 20, 0.8));
+  background: linear-gradient(180deg, rgba(8, 8, 20, 0.85), rgba(8, 8, 16, 0.78)),
+    url("assets/images/backgrounds/bg_title_powerline_mist.png") center/cover no-repeat;
+  background-blend-mode: multiply;
   z-index: 4;
   animation: fadeIn 0.6s ease both;
 }
@@ -118,6 +120,17 @@ body {
   color: #d5c2b2;
   font-size: 15px;
   line-height: 1.6;
+}
+
+.contentNotice {
+  margin: 10px 0 0;
+  padding: 10px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #f1ded0;
+  background: rgba(8, 7, 12, 0.45);
+  border: 1px solid rgba(244, 179, 141, 0.25);
+  border-radius: 10px;
 }
 
 .titleActions {

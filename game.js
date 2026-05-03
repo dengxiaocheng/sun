@@ -880,7 +880,11 @@
 
   function getEnding() {
     const values = state.values;
-    if ((values.A >= 85 && values.R <= 25) || (state.badLoop >= 3 && !state.flags.consultation)) {
+    if (
+      (values.A >= 85 && values.R <= 25)
+      || (state.badLoop >= 3 && !state.flags.consultation)
+      || (state.flags.burnoutSacrifice && values.R <= 20)
+    ) {
       return ENDINGS.stopMarch;
     }
     if ((state.flags.distanceUnlocked && values.B >= 70) || (values.B >= 70 && values.T < 50)) {
