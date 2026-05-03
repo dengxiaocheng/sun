@@ -71,6 +71,13 @@ const statusBarIds = ['barA', 'barM', 'barP', 'barR', 'barB', 'barT', 'barE'];
 const debugTupleTextPattern = /A:\s*\$\{state\.values\.A\}|M:\s*\$\{state\.values\.M\}|P:\s*\$\{state\.values\.P\}|R:\s*\$\{state\.values\.R\}|B:\s*\$\{state\.values\.B\}|T:\s*\$\{state\.values\.T\}|E:\s*\$\{state\.values\.E\}/;
 const chineseStatusLabels = ['焦虑雾', '动能', '复习进度', '恢复', '边界感', '关系温度', '理解/共情'];
 const hasChineseStatusLabels = (targetHtml) => chineseStatusLabels.every((label) => targetHtml.includes(label));
+const hasHometownQuickStartText = /先去见他（支线）/.test(files.html);
+const hasHometownQuickStartButtonId = /id=["']hometownQuickStartBtn["']/.test(files.html);
+const hasHometownQuickStartBind = /bindStartButton\(hometownQuickStartBtn/.test(files.js);
+const hasHometownQuickStartStart = /function startHometownBranchQuick\(\)/.test(files.js);
+const hasHometownQuickStartReset = /resetGame\('H00',\s*\{\s*hometownTrip:\s*true\s*\}\)/.test(files.js);
+const hasHometownTripEntryFromQuickPath = /function startHometownBranchQuick\([\s\S]*?resetGame\('H00',\s*\{\s*hometownTrip:\s*true\s*\}\)/.test(files.js)
+  && /beginHometownTrip\(state\)/.test(files.js);
 const hudTuplePattern = /[ABPMRTE]\\s*[:：]\\s*\\d{1,3}/;
 const jsTupleTemplatePattern = /[`'\"].*?(?:A|M|P|R|B|T|E)\\s*[:：]\\s*\\$\\{state\\.values\\.(?:A|M|P|R|B|T|E)\\}.*?[`'\"']/;
 
@@ -152,6 +159,9 @@ const checks = [
       && htmlStyleMatch[1] === expectedCacheVersion,
   },
   { name: 'title screen 有开始按钮', pass: /id="titleScreen"[\s\S]*id="startBtn"/.test(files.html) },
+  { name: '标题页新增“先去见他（支线）”入口', pass: hasHometownQuickStartButtonId && hasHometownQuickStartText },
+  { name: '标题页支线入口绑定点击与触控交互', pass: hasHometownQuickStartBind && /touchend/.test(files.js) && hasHometownQuickStartStart },
+  { name: '支线入口启动路径会初始化 H00 直接入场', pass: hasHometownQuickStartReset && hasHometownTripEntryFromQuickPath },
   { name: '开始按钮绑定点击与触控事件', pass: /bindStartButton\(startBtn,[\s\S]*\)\s*;/.test(files.js) && /touchend/.test(files.js) },
   {
     name: 'drawDebugStatus 不再绘制A/M/P/R/B/T/E裸字母数值串',

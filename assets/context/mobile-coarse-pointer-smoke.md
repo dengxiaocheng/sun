@@ -12,6 +12,8 @@ node assets/context/mobile-coarse-pointer-smoke.mjs
 
 - 开始菜单标题层存在且包含 `startBtn`。
 - `startBtn` 在代码中通过 `bindStartButton` 绑定交互。
+- 标题页存在 `hometownQuickStartBtn`，并在 `bindStartButton` 中绑定到直接进入 `H00` 的启动函数。
+- 脚本会校验快速支线入口文案/ID/绑定与 `resetGame('H00', { hometownTrip: true })` 路径存在。
 - 启动路径会调用 `enterPlayMode`，并将标题层与竖屏提示层设置为不可点击。
 - 对话框有点击推进事件，支持第一步推进文本。
 - 进入游戏后 HUD 显示、提示按钮尺寸符合 44px 触控门槛。

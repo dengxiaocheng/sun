@@ -13,6 +13,7 @@
 
   const titleScreen = document.getElementById('titleScreen');
   const startBtn = document.getElementById('startBtn');
+  const hometownQuickStartBtn = document.getElementById('hometownQuickStartBtn');
   const loadBtn = document.getElementById('loadBtn');
   const hud = document.getElementById('hud');
   const barA = document.getElementById('barA');
@@ -2014,8 +2015,8 @@
     systemPanel.classList.add('hidden');
   }
 
-  function resetGame() {
-    state.current = 'P00';
+  function resetGame(targetScene = 'P00', options = {}) {
+    state.current = targetScene || 'P00';
     state.lineIndex = 0;
     state.values = { A: 52, M: 38, P: 24, R: 42, B: 30, T: 55, E: 25 };
     state.flags = {};
@@ -2024,7 +2025,21 @@
     state.badLoop = 0;
     state.ended = false;
     state.flags.endingShown = false;
-    loadScene('P00');
+    if (options.hometownTrip) {
+      state.current = 'H00';
+      beginHometownTrip(state);
+    }
+    loadScene(state.current);
+  }
+
+  function startHometownBranchQuick() {
+    if (state.running) return;
+    resetGame('H00', { hometownTrip: true });
+    state.running = true;
+    enterPlayMode();
+    hud.classList.remove('hidden');
+    preloadScene(state.current).then(() => loadScene(state.current));
+    renderLoop();
   }
 
   function render() {
@@ -2288,6 +2303,10 @@
 
   bindStartButton(startBtn, () => {
     startGame(false);
+  });
+
+  bindStartButton(hometownQuickStartBtn, () => {
+    startHometownBranchQuick();
   });
 
   bindStartButton(loadBtn, () => {
