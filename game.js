@@ -200,7 +200,15 @@
       actor: 'characters/char_tangchu_sheet.png',
       lines: ['唐楚发来一句消息：岗位会变，能力可以换场。', '第一步总比情绪先到。'],
       choices: [
-        { text: '约她聊二十分钟', delta: { P: 5, M: 10 }, onChoose: (state) => { state.flags.tangchuTalk = true; }, next: 'C1N05' },
+          {
+            text: '约她聊二十分钟',
+            delta: { P: 5, M: 10 },
+            onChoose: (state) => {
+              state.flags.tangchuTalk = true;
+              state.flags.tangchuUnlocked = true;
+            },
+            next: 'C1N05',
+          },
         { text: '她是不是也很脆弱？', delta: { A: 6 }, next: 'C1N05' },
         { text: '先存下建议', delta: { M: 4 }, next: 'C1N05' },
       ],
@@ -890,7 +898,13 @@
     if ((state.flags.distanceUnlocked && values.B >= 70) || (values.B >= 70 && values.T < 50)) {
       return ENDINGS.powerOff;
     }
-    if (values.T >= 65 && values.B >= 60 && values.E >= 55 && !state.flags.burnoutSacrifice) {
+    if (
+      (state.flags.fixedCompanion || state.flags.lowPrayerHint || state.flags.hisResponsibility)
+      && values.T >= 65
+      && values.B >= 60
+      && values.E >= 55
+      && !state.flags.burnoutSacrifice
+    ) {
       return ENDINGS.lowPrayer;
     }
     if (state.flags.tangchuUnlocked && values.P >= 55 && values.M >= 55 && values.B >= 45) {
