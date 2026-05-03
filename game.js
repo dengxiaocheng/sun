@@ -58,6 +58,22 @@
   const hint = document.getElementById('hint');
   const choiceArea = document.getElementById('choiceArea');
   const dialogWrapper = document.getElementById('dialogWrapper');
+  const tripPackPanel = document.getElementById('tripPackPanel');
+  const tripPackTitle = document.getElementById('tripPackTitle');
+  const tripPackHint = document.getElementById('tripPackHint');
+  const tripPackList = document.getElementById('tripPackList');
+  const tripPackConfirm = document.getElementById('tripPackConfirm');
+  const tripStatusPanel = document.getElementById('tripStatusPanel');
+  const tripStatusTitle = document.getElementById('tripStatusTitle');
+  const tripProgressText = document.getElementById('tripProgressText');
+  const tripBarU = document.getElementById('tripBarU');
+  const tripBarF = document.getElementById('tripBarF');
+  const tripBarC = document.getElementById('tripBarC');
+  const tripBarK = document.getElementById('tripBarK');
+  const tripValueU = document.getElementById('tripValueU');
+  const tripValueF = document.getElementById('tripValueF');
+  const tripValueC = document.getElementById('tripValueC');
+  const tripValueK = document.getElementById('tripValueK');
 
   const menuBtn = document.getElementById('menuBtn');
   const storageBtn = document.getElementById('storageBtn');
@@ -75,6 +91,67 @@
 
   const saveButtons = document.getElementById('saveButtons');
   const loadButtons = document.getElementById('loadButtons');
+
+  const TRIP_PACK_LABELS = {
+    U: '旅程余裕',
+    F: '体力',
+    C: '手机电量',
+    L: '行李负担',
+    K: '连接感',
+  };
+  const TRIP_STATUS_METERS = {
+    U: { bar: tripBarU, valueEl: tripValueU, label: '旅程余裕' },
+    F: { bar: tripBarF, valueEl: tripValueF, label: '体力' },
+    C: { bar: tripBarC, valueEl: tripValueC, label: '手机电量' },
+    K: { bar: tripBarK, valueEl: tripValueK, label: '连接感' },
+  };
+
+  const TRIP_PACKS = {
+    H00: {
+      title: '行前打包（最多选 3 件）',
+      maxSelect: 3,
+      next: 'H01',
+      items: [
+        {
+          id: 'routeNote',
+          text: '纸质路线单：先确认行程，减少误会',
+          tripDelta: { U: 15, K: 2 },
+          delta: { B: 4, A: -3 },
+        },
+        {
+          id: 'powerBank',
+          text: '充电宝：为黑暗留一口电',
+          tripDelta: { C: 22, K: 2, U: 3 },
+          delta: { A: -4 },
+        },
+        {
+          id: 'snack',
+          text: '补给小零食：给体力留一根支点',
+          tripDelta: { F: 8, U: 4 },
+          delta: { A: -2 },
+        },
+        {
+          id: 'headphone',
+          text: '耳机：减少环境噪音干扰',
+          tripDelta: { U: -2, F: 2 },
+          delta: { A: -2, M: 2 },
+        },
+        {
+          id: 'photoGift',
+          text: '给他的礼物：把关系提前翻译成行动',
+          tripDelta: { L: 15, K: -4, F: -3 },
+          delta: { T: 4, A: 3, B: 1 },
+        },
+        {
+          id: 'extraNotes',
+          text: '带过量复习资料：准备不是不被抛弃',
+          tripDelta: { L: 26, U: -12, F: -6 },
+          delta: { P: 4, A: 8 },
+          note: '高负担会压低体力，慎选。',
+        },
+      ],
+    },
+  };
 
   function resetTripState(target = state) {
     target.trip = { ...DEFAULT_TRIP_STATE };
@@ -147,6 +224,7 @@
   function clearTripState(target = state) {
     target.trip = null;
     resetHometownTripMetadata(target);
+    hideTripStatusPanel(target);
   }
 
   function settleHometownTrip(target = state) {
@@ -207,6 +285,209 @@
     target.flags.hometownTripActive = false;
     target.trip = null;
     return true;
+  }
+
+  let currentTripPackConfig = null;
+
+  function hideTripPackPanel() {
+    if (!tripPackPanel || !tripPackTitle || !tripPackHint || !tripPackList || !tripPackConfirm) {
+      return;
+    }
+
+    tripPackPanel.classList.add('hidden');
+    tripPackTitle.textContent = '出发前打包';
+    tripPackHint.textContent = '点击道具并确认后继续';
+    tripPackList.innerHTML = '';
+    tripPackConfirm.disabled = true;
+    tripPackConfirm.onclick = null;
+  }
+
+  function formatSignedDelta(deltaValue) {
+    return `${deltaValue > 0 ? '+' : ''}${deltaValue}`;
+  }
+
+  function hideTripStatusPanel() {
+    if (!tripStatusPanel) return;
+    tripStatusPanel.classList.add('hidden');
+    if (tripStatusTitle) {
+      tripStatusTitle.textContent = '家乡之行 · 临时状态';
+    }
+    if (tripProgressText) {
+      tripProgressText.textContent = '';
+    }
+  }
+
+  function syncTripStatusPanel(target = state) {
+    if (!tripStatusPanel || !tripStatusTitle || !tripProgressText) {
+      return;
+    }
+
+    if (!target || !target.trip || typeof target.trip !== 'object') {
+      hideTripStatusPanel();
+      return;
+    }
+
+    const hometownStarted = target.flags?.hometownTripStarted;
+    const hometownActive = target.flags?.hometownTripActive;
+    const hometownSettled = target.flags?.hometownTripSettled;
+    if (!hometownStarted && !hometownActive && !hometownSettled) {
+      hideTripStatusPanel();
+      return;
+    }
+
+    ensureTripState(target);
+    tripStatusPanel.classList.remove('hidden');
+    const progressStep = Number(target.flags?.hometownTripProgress) || 0;
+    const progressText = `行程 ${Math.min(progressStep, HOMETOWN_TRIP_PATH.length)}/${HOMETOWN_TRIP_PATH.length} 段`;
+    tripProgressText.textContent = progressText;
+    tripStatusTitle.textContent = '家乡之行 · 临时状态';
+
+    Object.entries(TRIP_STATUS_METERS).forEach(([key, payload]) => {
+      const value = Math.max(0, Math.min(100, Math.round(Number(target.trip[key]) || 0)));
+      if (payload.bar) {
+        payload.bar.style.setProperty('--t', `${value}%`);
+      }
+      if (payload.valueEl) {
+        payload.valueEl.textContent = `${value}%`;
+      }
+    });
+  }
+
+  function buildTripPackSummary(config, selectedItems) {
+    const mainDelta = {};
+    const tripDelta = {};
+    const selectedNames = [];
+    selectedItems.forEach((itemIdOrObj) => {
+      const item = itemIdOrObj.id
+        ? itemIdOrObj
+        : config.items.find((candidate) => candidate.id === itemIdOrObj);
+      if (!item) return;
+
+      selectedNames.push(item.text.split('：')[0]);
+      Object.entries(item.tripDelta || {}).forEach(([key, value]) => {
+        const num = Number(value);
+        if (!Number.isFinite(num)) return;
+        tripDelta[key] = (tripDelta[key] || 0) + num;
+      });
+      Object.entries(item.delta || {}).forEach(([key, value]) => {
+        const num = Number(value);
+        if (!Number.isFinite(num)) return;
+        mainDelta[key] = (mainDelta[key] || 0) + num;
+      });
+    });
+
+    const tripParts = Object.entries(tripDelta)
+      .map(([key, value]) => `${TRIP_PACK_LABELS[key]}${formatSignedDelta(value)}`)
+      .join('，');
+    const mainParts = Object.entries(mainDelta)
+      .map(([key, value]) => `${key}${formatSignedDelta(value)}`)
+      .join('，');
+    const note = tripParts && mainParts
+      ? `预计变化：${tripParts}；主线 ${mainParts}`
+      : tripParts || mainParts || '暂无明显状态变化';
+    return {
+      note,
+      selectedNames,
+    };
+  }
+
+  function renderTripPackPanel(packConfig, onConfirm) {
+    if (!tripPackPanel || !tripPackTitle || !tripPackHint || !tripPackList || !tripPackConfirm) {
+      onConfirm([]);
+      return;
+    }
+
+    tripPackPanel.classList.remove('hidden');
+    tripPackTitle.textContent = packConfig.title || '出发前打包';
+    tripPackList.innerHTML = '';
+    currentTripPackConfig = {
+      packConfig,
+      selected: new Set(),
+    };
+
+    const maxSelect = Number(packConfig.maxSelect) || 3;
+
+    const updateSummary = () => {
+      const selectedNames = Array.from(currentTripPackConfig.selected);
+      const selectedItems = packConfig.items.filter((item) => currentTripPackConfig.selected.has(item.id));
+      const summary = buildTripPackSummary(packConfig, selectedItems);
+      const selectedText = selectedNames.length
+        ? `已选 ${selectedNames.length}/${maxSelect} 件：${summary.selectedNames.join('、')}`
+        : `请先选 1 到 ${maxSelect} 件道具`;
+      tripPackHint.textContent = `${selectedText}。${summary.note}`;
+      tripPackConfirm.disabled = selectedNames.length === 0;
+    };
+
+    packConfig.items.forEach((item) => {
+      const itemBtn = document.createElement('button');
+      itemBtn.type = 'button';
+      itemBtn.className = 'tripPackBtn';
+      itemBtn.setAttribute('aria-pressed', 'false');
+      itemBtn.textContent = `${item.text} ${item.note ? `（${item.note}）` : ''}`;
+      itemBtn.addEventListener('click', () => {
+        const selected = currentTripPackConfig.selected;
+        const isSelected = selected.has(item.id);
+        if (!isSelected && selected.size >= maxSelect) {
+          return;
+        }
+
+        if (isSelected) {
+          selected.delete(item.id);
+          itemBtn.setAttribute('aria-pressed', 'false');
+          itemBtn.classList.remove('selected');
+        } else {
+          selected.add(item.id);
+          itemBtn.setAttribute('aria-pressed', 'true');
+          itemBtn.classList.add('selected');
+        }
+
+        updateSummary();
+      });
+      tripPackList.appendChild(itemBtn);
+    });
+
+    updateSummary();
+
+    tripPackConfirm.onclick = () => {
+      if (currentTripPackConfig.selected.size === 0) return;
+      if (tripPackConfirm.disabled) return;
+      tripPackConfirm.disabled = true;
+      const chosen = Array.from(currentTripPackConfig.selected);
+      onConfirm(chosen);
+      hideTripPackPanel();
+    };
+  }
+
+  function applyTripPackSelection(config, selectedIds = []) {
+    const tripDelta = {};
+    const mainDelta = {};
+    const names = [];
+
+    selectedIds.forEach((id) => {
+      const item = (config.items || []).find((candidate) => candidate.id === id);
+      if (!item) return;
+
+      names.push(item.text.split('：')[0]);
+      Object.entries(item.tripDelta || {}).forEach(([key, value]) => {
+        const num = Number(value);
+        if (!Number.isFinite(num)) return;
+        tripDelta[key] = (tripDelta[key] || 0) + num;
+      });
+      Object.entries(item.delta || {}).forEach(([key, value]) => {
+        const num = Number(value);
+        if (!Number.isFinite(num)) return;
+        mainDelta[key] = (mainDelta[key] || 0) + num;
+      });
+      if (typeof item.onChoose === 'function') {
+        item.onChoose(state, selectedIds);
+      }
+    });
+
+    applyTripDelta(state, tripDelta);
+    normalizeDelta(state, mainDelta);
+
+    state.history.push(`→ 打包选择：${names.join('、')}`);
+    return config.next || 'H01';
   }
 
   const scenes = {
@@ -782,32 +1063,7 @@
         '她把包往床上倒了一圈，试图把可控和不可控分开。',
         '长途不是“去见你”一句话，而是八小时要被自己照顾完。',
       ],
-      choices: [
-        {
-          text: '熬夜反复查路线，先把不安先处理掉',
-          tripDelta: { U: 5, C: -15 },
-          delta: { A: 10, R: -5 },
-          next: 'H01',
-        },
-        {
-          text: '写一张简洁路线单，少一点焦虑',
-          tripDelta: { U: 15 },
-          delta: { A: -5, B: 5 },
-          next: 'H01',
-        },
-        {
-          text: '给他发一句“你能不能到站接我”',
-          tripDelta: { K: 12, U: 5 },
-          delta: { B: 8, A: 5 },
-          next: 'H01',
-        },
-        {
-          text: '明天再说：先不准备',
-          tripDelta: { U: -20, A: 10 },
-          delta: { A: 8, R: -6 },
-          next: 'H01',
-        },
-      ],
+      tripPack: TRIP_PACKS.H00,
     },
     H01: {
       id: 'H01',
@@ -1636,12 +1892,16 @@
     const line = currentScene.lines[state.lineIndex] || '';
     speaker.textContent = currentScene.title;
     dialogText.textContent = line;
-    hint.textContent = currentScene.choices.length && state.lineIndex >= currentScene.lines.length - 1
+    const hasTripPackAction = Boolean(currentScene.tripPack);
+    hint.textContent = (hasTripPackAction && state.lineIndex >= currentScene.lines.length - 1)
+      ? '选择道具后继续'
+      : currentScene.choices?.length && state.lineIndex >= currentScene.lines.length - 1
       ? '选择一项继续'
       : '点按对话框继续';
     dialogText.classList.toggle('large', state.settings.largeText);
 
     syncBars();
+    syncTripStatusPanel(scene);
     if (state.history && (line || currentScene.lines.length === 0)) {
       if (state.lineIndex === 0) {
         if (scene.end) {
@@ -1670,9 +1930,21 @@
   }
 
   function renderChoiceArea() {
+    hideTripPackPanel();
     choiceArea.innerHTML = '';
     const scene = scenes[state.current];
     if (!scene) return;
+
+    if (scene.tripPack) {
+      const tripPackConfig = TRIP_PACKS[scene.id] || scene.tripPack;
+      if (tripPackConfig) {
+        renderTripPackPanel(tripPackConfig, (selectedIds) => {
+          const next = applyTripPackSelection(tripPackConfig, selectedIds);
+          loadScene(next || 'END03');
+        });
+      }
+      return;
+    }
 
     if (scene.end && scene.lines.length > 0 && state.lineIndex < scene.lines.length - 1) {
       return;

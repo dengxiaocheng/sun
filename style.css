@@ -420,7 +420,130 @@ button {
   gap: 8px;
 }
 
+.tripStatusPanel {
+  margin: 8px 10px 0;
+  padding: 7px 8px 8px;
+  background: linear-gradient(180deg, rgba(18, 18, 32, 0.88), rgba(18, 18, 32, 0.65));
+  border: 1px solid rgba(242, 233, 219, 0.22);
+  border-radius: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.tripStatusPanel.hidden {
+  display: none;
+}
+
+.tripStatusTitle {
+  font-size: 11px;
+  color: #ffdcc9;
+}
+
+.tripProgressText {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.tripStatusRows {
+  display: grid;
+  gap: 4px;
+}
+
+.tripStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.tripStatusLabel {
+  width: 54px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.tripStatusRow i {
+  position: relative;
+  display: block;
+  height: 5px;
+  flex: 1;
+  min-width: 46px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.tripStatusRow i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: var(--t, 52%);
+  background: linear-gradient(90deg, #f8d7bc, #d97f70);
+  border-radius: 999px;
+}
+
+.tripStatusValue {
+  flex: 0 0 auto;
+  width: 34px;
+  min-width: 34px;
+  text-align: right;
+  color: #ffdfcc;
+  font-size: 9px;
+}
+
 #choiceArea:empty {
+  display: none;
+}
+
+.tripPackPanel {
+  margin: 8px 10px 10px;
+  padding: 10px;
+  background: linear-gradient(180deg, rgba(16, 16, 30, 0.84), rgba(16, 16, 30, 0.65));
+  border: 1px solid rgba(242, 233, 219, 0.2);
+  border-radius: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.tripPackTitle {
+  font-size: 13px;
+  color: #ffdcc9;
+}
+
+.tripPackHint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+#tripPackList {
+  display: grid;
+  gap: 6px;
+}
+
+.tripPackBtn {
+  min-height: 46px;
+  text-align: left;
+  font-size: 14px;
+  padding: 8px 10px;
+  background: linear-gradient(180deg, rgba(64, 50, 64, 0.95), rgba(36, 28, 40, 0.92));
+}
+
+.tripPackBtn[aria-pressed="true"] {
+  border-color: rgba(245, 189, 139, 0.75);
+  background: linear-gradient(180deg, rgba(106, 86, 70, 0.95), rgba(70, 52, 38, 0.95));
+}
+
+.tripPackBtn:disabled {
+  opacity: 0.45;
+}
+
+.tripPackPanel.hidden {
   display: none;
 }
 

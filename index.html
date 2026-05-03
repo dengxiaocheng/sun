@@ -25,11 +25,11 @@
         </div>
         </div>
 
-        <div id="hud" class="hidden">
-          <div class="statusRow">
-            <button id="menuBtn" class="iconBtn" aria-label="菜单">⋮</button>
-            <button id="storageBtn" class="iconBtn" aria-label="存档">💾</button>
-            <div class="bars">
+          <div id="hud" class="hidden">
+            <div class="statusRow">
+              <button id="menuBtn" class="iconBtn" aria-label="菜单">⋮</button>
+              <button id="storageBtn" class="iconBtn" aria-label="存档">💾</button>
+              <div class="bars">
               <div class="meter"><span class="meterLabel">焦虑雾</span><strong class="meterValue" id="valueA">52%</strong><i id="barA"></i><span class="meterDelta" id="deltaA" aria-hidden="true"></span></div>
               <div class="meter"><span class="meterLabel">动能</span><strong class="meterValue" id="valueM">38%</strong><i id="barM"></i><span class="meterDelta" id="deltaM" aria-hidden="true"></span></div>
               <div class="meter"><span class="meterLabel">复习进度</span><strong class="meterValue" id="valueP">24%</strong><i id="barP"></i><span class="meterDelta" id="deltaP" aria-hidden="true"></span></div>
@@ -39,6 +39,17 @@
               <div class="meter"><span class="meterLabel">理解/共情</span><strong class="meterValue" id="valueE">25%</strong><i id="barE"></i><span class="meterDelta" id="deltaE" aria-hidden="true"></span></div>
             </div>
             <button id="historyBtn" class="iconBtn" aria-label="历史">🕘</button>
+          </div>
+
+          <div id="tripStatusPanel" class="tripStatusPanel hidden" aria-live="polite">
+            <div id="tripStatusTitle" class="tripStatusTitle">家乡之行 · 临时状态</div>
+            <p id="tripProgressText" class="tripProgressText"></p>
+            <div class="tripStatusRows">
+              <div class="tripStatusRow"><span class="tripStatusLabel">旅程余裕</span><i id="tripBarU"></i><strong id="tripValueU" class="tripStatusValue">60%</strong></div>
+              <div class="tripStatusRow"><span class="tripStatusLabel">体力</span><i id="tripBarF"></i><strong id="tripValueF" class="tripStatusValue">75%</strong></div>
+              <div class="tripStatusRow"><span class="tripStatusLabel">手机电量</span><i id="tripBarC"></i><strong id="tripValueC" class="tripStatusValue">80%</strong></div>
+              <div class="tripStatusRow"><span class="tripStatusLabel">连接感</span><i id="tripBarK"></i><strong id="tripValueK" class="tripStatusValue">40%</strong></div>
+            </div>
           </div>
 
           <div id="systemPanel" class="systemPanel hidden">
@@ -72,6 +83,12 @@
             <div id="hint">点按对话框继续</div>
           </div>
           <div id="choiceArea"></div>
+          <div id="tripPackPanel" class="tripPackPanel hidden" aria-live="polite">
+            <div id="tripPackTitle" class="tripPackTitle">出发前打包</div>
+            <p id="tripPackHint" class="tripPackHint">点击道具并确认后继续</p>
+            <div id="tripPackList"></div>
+            <button id="tripPackConfirm" class="choiceBtn" disabled>确认打包</button>
+          </div>
         </div>
       </div>
     </main>
