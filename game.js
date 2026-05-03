@@ -227,6 +227,19 @@
     hideTripStatusPanel(target);
   }
 
+  function beginHometownTrip(target = state) {
+    resetTripState(target);
+    target.flags = target.flags || {};
+    target.flags.hometownTripOverload = false;
+    target.flags.hometownTripProgress = 0;
+    target.flags.hometownTripCurrentScene = 'H00';
+    target.flags.hometownTripFinalTrip = null;
+    target.flags.hometownTripActive = true;
+    target.flags.hometownTripResult = null;
+    target.flags.hometownTripStarted = true;
+    target.flags.hometownTripSettled = false;
+  }
+
   function settleHometownTrip(target = state) {
     if (!target.flags || !target.flags.hometownTripResult || target.flags.hometownTripSettled) {
       return false;
@@ -1038,14 +1051,8 @@
         {
           text: '先去见他（支线）',
           onChoose: (state) => {
-            resetTripState(state);
-            state.flags.hometownTripOverload = false;
-            state.flags.hometownTripProgress = 0;
-            state.flags.hometownTripCurrentScene = 'H00';
-            state.flags.hometownTripFinalTrip = null;
-            state.flags.hometownTripActive = true;
-            state.flags.hometownTripResult = null;
-            state.flags.hometownTripStarted = true;
+            beginHometownTrip(state);
+            state.history.push('→ 选择家乡支线');
           },
           next: 'H00',
         },
