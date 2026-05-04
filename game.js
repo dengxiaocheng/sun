@@ -1766,6 +1766,16 @@
     return height > 0 && width >= height * 2 && width % 4 === 0;
   }
 
+  function getActorFrameCount(img) {
+    if (!img || !img.naturalWidth || !img.naturalHeight) {
+      return 0;
+    }
+    if (!isActorSpriteSheet(img)) {
+      return 0;
+    }
+    return 4;
+  }
+
   function updateActorLayer(activeScene) {
     if (!actorLayer || !actorSprite) return false;
     if (!activeScene || !activeScene.actor) {
@@ -1783,16 +1793,31 @@
     }
 
     const img = actorCache.img;
-    const isSprite = isActorSpriteSheet(img);
-    const frame = isSprite ? Math.floor((Date.now() / 240) % 4) : 0;
+    const frameCount = isActorSpriteSheet(img) ? getActorFrameCount(img) : 0;
+    const isSprite = frameCount >= 2;
+    if (!isSprite) {
+      actorLayer.classList.remove('hidden');
+      actorSprite.classList.remove('actorSpriteSheet');
+      actorSprite.style.backgroundImage = `url("${img.src}")`;
+      actorSprite.style.backgroundPosition = '50% 50%';
+      actorSprite.style.width = `${Math.max(img.naturalWidth, 64) / BASE_W * 100}%`;
+      actorSprite.style.backgroundSize = 'contain';
+      actorSprite.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
+      actorSprite.setAttribute('data-actor-path', actorPath);
+      actorSprite.setAttribute('data-actor-frame', '0');
+      return true;
+    }
+
+    const frame = Math.floor((Date.now() / 240) % frameCount);
+    const xOffset = `${(frame * 100) / (frameCount - 1)}%`;
 
     actorLayer.classList.remove('hidden');
-    actorSprite.classList.toggle('actorSpriteSheet', isSprite);
+    actorSprite.classList.add('actorSpriteSheet');
     actorSprite.style.backgroundImage = `url("${img.src}")`;
-    actorSprite.style.backgroundPosition = isSprite ? `${-(frame * 25)}% 50%` : '50% 50%';
-    actorSprite.style.width = `${(isSprite ? 178 : Math.max(img.naturalWidth, 64)) / BASE_W * 100}%`;
-    actorSprite.style.backgroundSize = isSprite ? '400% 100%' : 'contain';
-    actorSprite.style.aspectRatio = isSprite ? '96 / 160' : `${img.naturalWidth} / ${img.naturalHeight}`;
+    actorSprite.style.backgroundPosition = `${xOffset} 50%`;
+    actorSprite.style.width = `${178 / BASE_W * 100}%`;
+    actorSprite.style.backgroundSize = `${frameCount * 100}% 100%`;
+    actorSprite.style.aspectRatio = `${img.naturalWidth / frameCount} / ${img.naturalHeight}`;
     actorSprite.setAttribute('data-actor-path', actorPath);
     actorSprite.setAttribute('data-actor-frame', String(frame));
 

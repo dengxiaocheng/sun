@@ -102,6 +102,18 @@ const getSceneAssetCandidates = (sceneId, logicalPath) => {
   const candidates = getAssetCandidates(logicalPath, sceneId);
   return candidates.map((path) => `assets/images/${stripImagePrefix(path)}`);
 };
+const getSceneFieldValue = (sceneId, fieldName) => {
+  const sceneMatch = new RegExp(`\\\\b${sceneId}:\\\\s*\\\\{[\\\\s\\\\S]*?\\\\n\\\\s*${fieldName}:\\\\s*['\"]([^'"]+)['"]`).exec(scenesBlock);
+  return sceneMatch?.[1] || '';
+};
+const getSceneFieldCandidates = (sceneId, fieldName) => {
+  const logicalPath = getSceneFieldValue(sceneId, fieldName);
+  if (!logicalPath) {
+    return [];
+  }
+  return getSceneAssetCandidates(sceneId, logicalPath);
+};
+const hasAllPaths = (items) => items.length > 0 && items.every(hasPathOnDisk);
 
 const remapMapHasRequiredKeys = SAFE_ASSET_REMAP_KEYS.every((key) => ASSET_REMAP_MAP[key]);
 const remapAllHaveFallback = ASSET_REMAP_ENTRIES.every((entry) => Boolean(entry[2]) && Boolean(entry[3]));
@@ -120,9 +132,11 @@ const p00SceneCandidates = getSceneAssetCandidates('P00', getSceneBg('P00'));
 const p01SceneCandidates = getSceneAssetCandidates('P01', getSceneBg('P01'));
 const h00SceneCandidates = getSceneAssetCandidates('H00', getSceneBg('H00'));
 const keySceneCandidates = getSceneAssetCandidates(null, 'backgrounds/bg_title_powerline_mist.png');
+const p00ActorCandidates = getSceneFieldCandidates('P00', 'actor');
+const h00ActorCandidates = getSceneFieldCandidates('H00', 'actor');
 const hasMainlineOriginalFirstInP00 = p00SceneCandidates[0] === `assets/images/${stripImagePrefix(getSceneBg('P00'))}`;
 const hasMainlineOriginalFirstInP01 = p01SceneCandidates[0] === `assets/images/${stripImagePrefix(getSceneBg('P01'))}`;
-const sceneCandidatesExist = (items) => items.length > 0 && items.every(hasPathOnDisk);
+const sceneCandidatesExist = hasAllPaths;
 
 const mapSceneKeysForHometown = HOMETOWN_SCENE_IDS.flatMap((sceneId) => {
   const bg = getSceneBg(sceneId);
@@ -171,6 +185,10 @@ const hasActorLayerStyle = /#actorLayer\s*[\s\S]*?pointer-events:\s*none/.test(f
 const hasActorLayerInRender = /function updateActorLayer\(activeScene\)/.test(files.js);
 const hasActorLayerRenderBinding = /const hasActorLayer = updateActorLayer\(activeScene\);/.test(files.js);
 const hasActorLayerUseSpriteSheetCss = /actorSpriteSheet/.test(files.css);
+const hasSafeSpriteFrameOffsetFormula = files.js.includes('actorSprite.style.backgroundPosition = `${xOffset} 50%`;');
+const hasNegativeCropFormula = files.js.includes('${-(frame * 25)}% 50%')
+  || files.js.includes('backgroundPosition = `${-(frame *')
+  || files.js.includes('const xOffset = `${-(frame')
 const hasActorRemapDisabledForCharacters = !/fix_patch\/.*char/.test(files.js) && !/characters_transparent/.test(files.js);
 const hasOriginalCharacterPrimaryPath = /resolveImagePath\(activeScene\.actor,\s*state\.current\)/.test(files.js);
 const hasMobileStartActorLayer = /#actorLayer\.hidden/.test(files.css);
@@ -193,6 +211,23 @@ const publicHtml = await (async () => {
     return '';
   }
 })();
+const checkHttpStatus200 = async (url) => {
+  if (!url) return false;
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.status === 200;
+  } catch {
+    return false;
+  }
+};
+const hasP00ActorPrimaryLocal = !p00ActorCandidates.length
+  || (/^assets\/images\/characters\//.test(p00ActorCandidates[0] || '') && !/fix_patch/.test(p00ActorCandidates[0] || ''));
+const hasH00ActorPrimaryLocal = !h00ActorCandidates.length
+  || (/^assets\/images\/characters\//.test(h00ActorCandidates[0] || '') && !/fix_patch/.test(h00ActorCandidates[0] || ''));
+const hasP00ActorLocalFiles = !p00ActorCandidates.length || hasAllPaths(p00ActorCandidates);
+const hasH00ActorLocalFiles = !h00ActorCandidates.length || hasAllPaths(h00ActorCandidates);
+const hasP00ActorPublic200 = !p00ActorCandidates[0] || await checkHttpStatus200(`https://dengxiaocheng.github.io/sun/${p00ActorCandidates[0]}`);
+const hasH00ActorPublic200 = await checkHttpStatus200(`https://dengxiaocheng.github.io/sun/${h00ActorCandidates[0] || ''}`);
 
 const currentReleaseMatch = (() => {
   try {
@@ -375,6 +410,18 @@ const checks = [
     pass: hasActorLayerIds && hasActorLayerStyle && hasMobileStartActorLayer,
   },
   {
+    name: 'P00 / H00 角色资源解析为本地角色目录主资源',
+    pass: hasP00ActorPrimaryLocal && hasH00ActorPrimaryLocal,
+  },
+  {
+    name: 'P00 / H00 角色主资源文件存在',
+    pass: hasP00ActorLocalFiles && hasH00ActorLocalFiles,
+  },
+  {
+    name: 'P00 / H00 角色主资源 public 200 可达',
+    pass: hasP00ActorPublic200 && hasH00ActorPublic200,
+  },
+  {
     name: '角色层 z-index 在 HUD/dialog/choice 之后（角色在下方）',
     pass: hasMobileActorLayerZOrder,
   },
@@ -388,7 +435,7 @@ const checks = [
   },
   {
     name: '角色 sprite-sheet 使用 4 帧裁切策略（400%+背景偏移）',
-    pass: hasActorLayerUseSpriteSheetCss,
+    pass: hasActorLayerUseSpriteSheetCss && hasSafeSpriteFrameOffsetFormula && !hasNegativeCropFormula,
   },
   { name: '资源映射配置存在', pass: !!remapBlockMatch && !!hometownRemapBlockMatch },
   { name: '图片候选链使用场景参数（非全局硬编码 remap）', pass: hasResolveImageMapPath },
