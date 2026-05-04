@@ -86,7 +86,7 @@ body {
   display: grid;
   place-items: center;
   background: linear-gradient(180deg, rgba(8, 8, 20, 0.85), rgba(8, 8, 16, 0.78)),
-    url("assets/images/backgrounds/bg_title_powerline_mist.png") center/cover no-repeat;
+    url("assets/images/fix_patch/backgrounds_china_kaoyan/bg_china_university_library_winter.png") center/cover no-repeat;
   background-blend-mode: multiply;
   z-index: 4;
   animation: fadeIn 0.6s ease both;

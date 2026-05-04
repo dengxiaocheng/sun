@@ -32,8 +32,10 @@
 
 当前发布版本使用缓存失效参数：
 
-- `style.css?v=sun-release-20260503-hometown-branch-entry`
-- `game.js?v=sun-release-20260503-hometown-branch-entry`
+- `style.css?v=sun-release-20260504-hometown-fixpatch-asset-map`
+- `game.js?v=sun-release-20260504-hometown-fixpatch-asset-map`
+
+- 说明：`game.js` 已新增资源路径重映射层（`ASSET_REMAP`），在不改动旧资源路径标识符的情况下，将角色/背景/CG 映射至 `assets/images/fix_patch/*` 中的最新整改包文件；标题页背景在 `style.css` 直接使用 `bg_china_university_library_winter.png`。
 
 七个状态统一展示为中文进度条：焦虑雾、动能、复习进度、恢复、边界感、关系温度、理解/共情。
 7 条进度条为同一套状态区，显示标签与实时百分比；选择后受影响条目会立即高亮并显示 +N/-N 提示。

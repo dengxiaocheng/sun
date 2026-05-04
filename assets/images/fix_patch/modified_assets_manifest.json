@@ -1,0 +1,390 @@
+[
+  {
+    "file": "assets/characters_transparent/char_counselor_sheet.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "384x160",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 96,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/characters_transparent/char_dxc_daily_sheet.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "384x160",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 96,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/characters_transparent/char_dxc_studio_sheet.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "384x160",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 96,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/characters_transparent/char_dxc_tender_sheet.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "384x160",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 96,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/characters_transparent/char_linzhi_sheet.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "384x160",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 96,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/characters_transparent/char_mother_avatar.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "64x64",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 64,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/characters_transparent/char_smx_daily_sheet.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "384x160",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 96,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/characters_transparent/char_smx_exam_sheet.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "384x160",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 96,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/characters_transparent/char_smx_pinkcoat_sheet.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "384x160",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 96,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/characters_transparent/char_smx_study_sheet.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "384x160",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 96,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/characters_transparent/char_tangchu_sheet.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "384x160",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 96,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/characters_transparent/char_unknown_crowd_sheet.png",
+    "category": "character_sprite_sheet",
+    "layer": "foreground_character_transparent_png",
+    "size": "384x160",
+    "alpha": "yes; background removed by matting",
+    "frame_width": 96,
+    "notes": "可直接叠加到任意背景；不应再出现灰色底框。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_china_university_library_winter.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_translation_lab.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_postgrad_registration_office.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_campus_lake_evening.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_rental_room_night.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_subway_home.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_kaoyan_exam_gate_china.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_kaoyan_selfstudy_hall.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_offcampus_teashop.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_hospital_corridor.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_internship_office.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/backgrounds_china_kaoyan/bg_train_station_platform_winter.png",
+    "category": "background",
+    "layer": "background_opaque_png",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国大陆大学/考研语境替换背景；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/cg_china_kaoyan/cg_application_form_night.png",
+    "category": "cg",
+    "layer": "full_screen_opaque_cg",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国考研增量剧情CG；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/cg_china_kaoyan/cg_bus_stop_argument.png",
+    "category": "cg",
+    "layer": "full_screen_opaque_cg",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国考研增量剧情CG；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/cg_china_kaoyan/cg_consultation_breathing.png",
+    "category": "cg",
+    "layer": "full_screen_opaque_cg",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国考研增量剧情CG；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/cg_china_kaoyan/cg_kaoyan_admission_ticket.png",
+    "category": "cg",
+    "layer": "full_screen_opaque_cg",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国考研增量剧情CG；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/cg_china_kaoyan/cg_first_freelance_payment.png",
+    "category": "cg",
+    "layer": "full_screen_opaque_cg",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国考研增量剧情CG；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/cg_china_kaoyan/cg_reserved_blank_slot.png",
+    "category": "cg",
+    "layer": "full_screen_opaque_cg",
+    "size": "180x320",
+    "alpha": "opaque",
+    "notes": "中国考研增量剧情CG；已裁掉图集标题框和标签。"
+  },
+  {
+    "file": "assets/ui/ui_dialog_box_9slice.png",
+    "category": "ui",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/ui/ui_choice_button_9slice.png",
+    "category": "ui",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/ui/ui_choice_button_locked.png",
+    "category": "ui",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/ui/ui_meter_fog.png",
+    "category": "ui",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/ui/ui_meter_drive.png",
+    "category": "ui",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/ui/ui_meter_study.png",
+    "category": "ui",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/ui/ui_icons_choices.png",
+    "category": "ui",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/ui/ui_phone_frame.png",
+    "category": "ui",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/ui/ui_save_slot.png",
+    "category": "ui",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/fx/fx_fog_overlay_sheet.png",
+    "category": "fx",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/fx/fx_crt_noise_sheet.png",
+    "category": "fx",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/fx/fx_rain_sheet.png",
+    "category": "fx",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/fx/fx_powerline_spark_sheet.png",
+    "category": "fx",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/fx/fx_text_shiver.png",
+    "category": "fx",
+    "layer": "ui_or_effect_overlay",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/palettes/palette_mist_32.gpl",
+    "category": "palettes",
+    "layer": "palette_reference",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/palettes/palette_mist_32.png",
+    "category": "palettes",
+    "layer": "palette_reference",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  },
+  {
+    "file": "assets/palettes/palette_anxiety_states.png",
+    "category": "palettes",
+    "layer": "palette_reference",
+    "size": "see file",
+    "alpha": "mixed",
+    "notes": "沿用旧版资源；角色透明问题不涉及此类资源。"
+  }
+]

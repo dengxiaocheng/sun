@@ -11,6 +11,37 @@ const files = {
   readme: fs.readFileSync(`${repoRoot}/README.md`, 'utf8'),
 };
 
+const REQUIRED_ASSET_REMAP_ENTRIES = [
+  "const ASSET_REMAP = {",
+  "'characters/char_smx_exam_sheet.png': 'fix_patch/characters_transparent/char_smx_exam_sheet.png'",
+  "'backgrounds/bg_title_powerline_mist.png': 'fix_patch/backgrounds_china_kaoyan/bg_china_university_library_winter.png'",
+  "'cg/cg_powerline_couple.png': 'fix_patch/cg_china_kaoyan/cg_bus_stop_argument.png'",
+];
+
+const REQUIRED_FIX_PATCH_ASSETS = [
+  'assets/images/fix_patch/characters_transparent/char_smx_exam_sheet.png',
+  'assets/images/fix_patch/backgrounds_china_kaoyan/bg_rental_room_night.png',
+  'assets/images/fix_patch/backgrounds_china_kaoyan/bg_china_university_library_winter.png',
+  'assets/images/fix_patch/cg_china_kaoyan/cg_first_freelance_payment.png',
+  'assets/images/fix_patch/cg_china_kaoyan/cg_consultation_breathing.png',
+];
+
+const HOMETOWN_SCENE_IDS = ['H00', 'H01', 'H02', 'H03', 'H04', 'H05', 'H06', 'H07', 'H08'];
+const hasAllHometownNodes = HOMETOWN_SCENE_IDS.every((nodeId) => new RegExp(`\\b${nodeId}:`).test(files.js));
+
+const hometownRemapCoverage = /const HOMETOWN_REMAP_PATHS = \[/;
+const requiredHometownRemapDirs = [
+  'assets/images/fix_patch/characters_transparent',
+  'assets/images/fix_patch/backgrounds_china_kaoyan',
+  'assets/images/fix_patch/cg_china_kaoyan',
+];
+
+const hasFixPatchAsset = (assetPath) => fs.existsSync(`${repoRoot}/${assetPath}`);
+const fixPatchDirectoriesExist = requiredHometownRemapDirs.every((dir) => fs.existsSync(`${repoRoot}/${dir}`));
+const fixPatchAssetsExist = REQUIRED_FIX_PATCH_ASSETS.every((assetPath) => hasFixPatchAsset(assetPath));
+const hasResolveImageMapPath = /function resolveImagePath\(path\) \{[\s\S]*?return `assets\/images\/\$\{mapped\}`;/.test(files.js);
+const hasFixTitleStyle = /assets\/images\/fix_patch\/backgrounds_china_kaoyan\/bg_china_university_library_winter\.png/.test(files.css);
+
 const hasIds = (target, ids) => ids.every((id) => new RegExp(`id=["']${id}["']`).test(target));
 
 const publicHtml = await (async () => {
@@ -200,6 +231,13 @@ const checks = [
   { name: '发布页不再有 portraitLock 关键字', pass: !/portraitLock/.test(publicHtml) && !/portraitLock/.test(files.css) },
   { name: 'release.version 与 index/query 一致', pass: releaseVersionFromFile && htmlCacheVersion === releaseVersionFromFile },
   { name: 'release.version 与 README 一致', pass: releaseVersionFromFile && readmeCacheVersion === releaseVersionFromFile },
+  { name: '资源映射配置存在', pass: REQUIRED_ASSET_REMAP_ENTRIES.every((entry) => files.js.includes(entry)) },
+  { name: 'resolveImagePath 使用修复资源统一前缀', pass: hasResolveImageMapPath },
+  { name: 'Hometown 映射路径变量存在', pass: hometownRemapCoverage.test(files.js) },
+  { name: '修复资源目录存在', pass: fixPatchDirectoriesExist },
+  { name: '关键修复资源存在', pass: fixPatchAssetsExist },
+  { name: '修复资源样式替换至标题背景', pass: hasFixTitleStyle },
+  { name: '家乡分支节点 H00-H08 全量定义', pass: hasAllHometownNodes },
   { name: 'UI 有 7 条同源状态条 DOM', pass: hasSevenBarDom && hasSevenValueDom && hasSevenDeltaDom },
   { name: 'syncBars 统一更新所有 7 条条宽度与 7 条数值文案', pass: syncBarsUpdatesAllBars && syncBarsUpdatesAllValues },
   { name: 'statusBars 配置完整覆盖 7 个状态键', pass: hasSevenStatusKeysInBars && hasDefinedSevenStatusBars },

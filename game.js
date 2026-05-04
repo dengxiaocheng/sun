@@ -1567,8 +1567,66 @@
   let imageCache = {};
   let rafId;
   let pressTimer;
+
+  const ASSET_REMAP = {
+    // Transparent characters from the整改包
+    'characters/char_smx_daily_sheet.png': 'fix_patch/characters_transparent/char_smx_daily_sheet.png',
+    'characters/char_smx_pinkcoat_sheet.png': 'fix_patch/characters_transparent/char_smx_pinkcoat_sheet.png',
+    'characters/char_smx_study_sheet.png': 'fix_patch/characters_transparent/char_smx_study_sheet.png',
+    'characters/char_smx_exam_sheet.png': 'fix_patch/characters_transparent/char_smx_exam_sheet.png',
+    'characters/char_dxc_daily_sheet.png': 'fix_patch/characters_transparent/char_dxc_daily_sheet.png',
+    'characters/char_dxc_studio_sheet.png': 'fix_patch/characters_transparent/char_dxc_studio_sheet.png',
+    'characters/char_dxc_tender_sheet.png': 'fix_patch/characters_transparent/char_dxc_tender_sheet.png',
+    'characters/char_linzhi_sheet.png': 'fix_patch/characters_transparent/char_linzhi_sheet.png',
+    'characters/char_tangchu_sheet.png': 'fix_patch/characters_transparent/char_tangchu_sheet.png',
+    'characters/char_counselor_sheet.png': 'fix_patch/characters_transparent/char_counselor_sheet.png',
+    'characters/char_unknown_crowd_sheet.png': 'fix_patch/characters_transparent/char_unknown_crowd_sheet.png',
+    'characters/char_mother_avatar.png': 'fix_patch/characters_transparent/char_mother_avatar.png',
+
+    // Hometown/mainline backgrounds remapped to 中国考研整改包
+    'backgrounds/bg_dorm_0230.png': 'fix_patch/backgrounds_china_kaoyan/bg_rental_room_night.png',
+    'backgrounds/bg_campus_morning_fog.png': 'fix_patch/backgrounds_china_kaoyan/bg_campus_lake_evening.png',
+    'backgrounds/bg_library_stack.png': 'fix_patch/backgrounds_china_kaoyan/bg_kaoyan_selfstudy_hall.png',
+    'backgrounds/bg_selfstudy_room_cold.png': 'fix_patch/backgrounds_china_kaoyan/bg_kaoyan_selfstudy_hall.png',
+    'backgrounds/bg_cafeteria_grey_noon.png': 'fix_patch/backgrounds_china_kaoyan/bg_offcampus_teashop.png',
+    'backgrounds/bg_bus_stop_rain.png': 'fix_patch/backgrounds_china_kaoyan/bg_train_station_platform_winter.png',
+    'backgrounds/bg_deng_studio_chapel.png': 'fix_patch/backgrounds_china_kaoyan/bg_translation_lab.png',
+    'backgrounds/bg_mock_exam_room.png': 'fix_patch/backgrounds_china_kaoyan/bg_postgrad_registration_office.png',
+    'backgrounds/bg_rooftop_evening.png': 'fix_patch/backgrounds_china_kaoyan/bg_subway_home.png',
+    'backgrounds/bg_counseling_corridor.png': 'fix_patch/backgrounds_china_kaoyan/bg_translation_lab.png',
+    'backgrounds/bg_exam_gate_dawn.png': 'fix_patch/backgrounds_china_kaoyan/bg_kaoyan_exam_gate_china.png',
+    'backgrounds/bg_title_powerline_mist.png': 'fix_patch/backgrounds_china_kaoyan/bg_china_university_library_winter.png',
+
+    // CG 映射：优先使用最新考研修正版替代旧语境CG
+    'cg/cg_powerline_couple.png': 'fix_patch/cg_china_kaoyan/cg_bus_stop_argument.png',
+    'cg/cg_translation_note.png': 'fix_patch/cg_china_kaoyan/cg_consultation_breathing.png',
+    'cg/cg_dxc_electronic_liturgy.png': 'fix_patch/cg_china_kaoyan/cg_kaoyan_admission_ticket.png',
+    'cg/cg_smx_toilet_panic.png': 'fix_patch/cg_china_kaoyan/cg_first_freelance_payment.png',
+    'cg/cg_exam_morning_hands.png': 'fix_patch/cg_china_kaoyan/cg_consultation_breathing.png',
+    'cg/cg_ending_new_page.png': 'fix_patch/cg_china_kaoyan/cg_first_freelance_payment.png',
+    'cg/cg_ending_low_prayer.png': 'fix_patch/cg_china_kaoyan/cg_consultation_breathing.png',
+    'cg/cg_ending_foglamp.png': 'fix_patch/cg_china_kaoyan/cg_kaoyan_admission_ticket.png',
+    'cg/cg_ending_poweroff.png': 'fix_patch/cg_china_kaoyan/cg_reserved_blank_slot.png',
+    'cg/cg_ending_march_loop.png': 'fix_patch/cg_china_kaoyan/cg_bus_stop_argument.png',
+  };
+
+  const HOMETOWN_REMAP_PATHS = [
+    'fix_patch/characters_transparent/char_smx_exam_sheet.png',
+    'fix_patch/characters_transparent/char_smx_daily_sheet.png',
+    'fix_patch/characters_transparent/char_dxc_daily_sheet.png',
+    'fix_patch/characters_transparent/char_dxc_tender_sheet.png',
+    'fix_patch/backgrounds_china_kaoyan/bg_rental_room_night.png',
+    'fix_patch/backgrounds_china_kaoyan/bg_campus_lake_evening.png',
+    'fix_patch/backgrounds_china_kaoyan/bg_subway_home.png',
+    'fix_patch/backgrounds_china_kaoyan/bg_kaoyan_exam_gate_china.png',
+    'fix_patch/backgrounds_china_kaoyan/bg_kaoyan_selfstudy_hall.png',
+    'fix_patch/backgrounds_china_kaoyan/bg_train_station_platform_winter.png',
+    'fix_patch/cg_china_kaoyan/cg_first_freelance_payment.png',
+  ];
+
   function resolveImagePath(path) {
-    return `assets/images/${path}`;
+    const mapped = ASSET_REMAP[path] || path;
+    return `assets/images/${mapped}`;
   }
 
   function isPortraitLayout() {
