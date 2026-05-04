@@ -59,6 +59,8 @@
   const hint = document.getElementById('hint');
   const choiceArea = document.getElementById('choiceArea');
   const dialogWrapper = document.getElementById('dialogWrapper');
+  const actorLayer = document.getElementById('actorLayer');
+  const actorSprite = document.getElementById('actorSprite');
   const tripPackPanel = document.getElementById('tripPackPanel');
   const tripPackTitle = document.getElementById('tripPackTitle');
   const tripPackHint = document.getElementById('tripPackHint');
@@ -1745,6 +1747,58 @@
     hidePortraitLock();
   }
 
+  function hideActorLayer() {
+    if (!actorLayer || !actorSprite) return;
+    actorLayer.classList.add('hidden');
+    actorSprite.style.backgroundImage = '';
+    actorSprite.classList.remove('actorSpriteSheet');
+    actorSprite.style.backgroundSize = '';
+    actorSprite.style.backgroundPosition = '';
+    actorSprite.style.aspectRatio = '';
+    actorSprite.style.width = '';
+    actorSprite.removeAttribute('data-actor-path');
+    actorSprite.removeAttribute('data-actor-frame');
+  }
+
+  function isActorSpriteSheet(img) {
+    const width = img.naturalWidth || 0;
+    const height = img.naturalHeight || 0;
+    return height > 0 && width >= height * 2 && width % 4 === 0;
+  }
+
+  function updateActorLayer(activeScene) {
+    if (!actorLayer || !actorSprite) return false;
+    if (!activeScene || !activeScene.actor) {
+      hideActorLayer();
+      return false;
+    }
+
+    const actorPath = resolveImagePath(activeScene.actor, state.current);
+    const actorCache = actorPath
+      ? resolveImageLoadState(activeScene.actor, state.current) || imageCache[actorPath]
+      : null;
+    if (!actorCache || actorCache.status !== 'ready' || !actorCache.img) {
+      hideActorLayer();
+      return false;
+    }
+
+    const img = actorCache.img;
+    const isSprite = isActorSpriteSheet(img);
+    const frame = isSprite ? Math.floor((Date.now() / 240) % 4) : 0;
+
+    actorLayer.classList.remove('hidden');
+    actorSprite.classList.toggle('actorSpriteSheet', isSprite);
+    actorSprite.style.backgroundImage = `url("${img.src}")`;
+    actorSprite.style.backgroundPosition = isSprite ? `${-(frame * 25)}% 50%` : '50% 50%';
+    actorSprite.style.width = `${(isSprite ? 178 : Math.max(img.naturalWidth, 64)) / BASE_W * 100}%`;
+    actorSprite.style.backgroundSize = isSprite ? '400% 100%' : 'contain';
+    actorSprite.style.aspectRatio = isSprite ? '96 / 160' : `${img.naturalWidth} / ${img.naturalHeight}`;
+    actorSprite.setAttribute('data-actor-path', actorPath);
+    actorSprite.setAttribute('data-actor-frame', String(frame));
+
+    return true;
+  }
+
   function enterPlayMode() {
     titleScreen.classList.add('hidden');
     titleScreen.setAttribute('aria-hidden', 'true');
@@ -2224,17 +2278,20 @@
       ctx.fillRect(0, 0, BASE_W, BASE_H);
     }
 
-    const actorPath = activeScene.actor ? resolveImagePath(activeScene.actor, state.current) : null;
-    const actorCache = actorPath ? resolveImageLoadState(activeScene.actor, state.current) || imageCache[actorPath] : null;
-    if (actorCache && actorCache.status === 'ready' && actorCache.img) {
-      const sw = 96;
-      const sh = 160;
-      const frame = Math.floor((Date.now() / 240) % 4);
-      const dw = 178;
-      const dh = 296;
-      const x = (BASE_W - dw) / 2;
-      const y = 292;
-      ctx.drawImage(actorCache.img, sw * frame, 0, sw, sh, x, y, dw, dh);
+    const hasActorLayer = updateActorLayer(activeScene);
+    if (!hasActorLayer) {
+      const actorPath = activeScene.actor ? resolveImagePath(activeScene.actor, state.current) : null;
+      const actorCache = actorPath ? resolveImageLoadState(activeScene.actor, state.current) || imageCache[actorPath] : null;
+      if (actorCache && actorCache.status === 'ready' && actorCache.img) {
+        const sw = 96;
+        const sh = 160;
+        const frame = Math.floor((Date.now() / 240) % 4);
+        const dw = 178;
+        const dh = 296;
+        const x = (BASE_W - dw) / 2;
+        const y = 292;
+        ctx.drawImage(actorCache.img, sw * frame, 0, sw, sh, x, y, dw, dh);
+      }
     }
 
     if (state.values.A > 42 && state.settings.fog) {

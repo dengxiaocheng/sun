@@ -32,8 +32,8 @@
 
 当前发布版本使用缓存失效参数：
 
-- `style.css?v=sun-release-20260504-hometown-safe-bg-only`
-- `game.js?v=sun-release-20260504-hometown-safe-bg-only`
+- `style.css?v=sun-release-20260504-hometown-actor-layer-dom`
+- `game.js?v=sun-release-20260504-hometown-actor-layer-dom`
 
 - 说明：`game.js` 的重映射已回退为：以原始资源为默认主路径，`ASSET_REMAP` 仅作为可复用映射定义，不做全局 fallback；仅在 `H00`-`H08` 场景白名单内按场景选择性覆盖背景，并保留 `titleScreen` 的原图优先背景（`bg_title_powerline_mist.png`），未提供可用修复图时回退原图。
 

@@ -4,12 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>雾线下的译者</title>
-    <link rel="stylesheet" href="./style.css?v=sun-release-20260504-hometown-safe-bg-only" />
+    <link rel="stylesheet" href="./style.css?v=sun-release-20260504-hometown-actor-layer-dom" />
   </head>
   <body>
     <main id="wrap">
       <div id="gameContainer">
         <canvas id="gameCanvas" width="360" height="640" aria-label="游戏画布"></canvas>
+        <div id="actorLayer" class="hidden" aria-hidden="true">
+          <div id="actorSprite" aria-hidden="true"></div>
+        </div>
 
         <div id="titleScreen" class="screen">
           <div class="titleCard">
@@ -98,6 +101,6 @@
       </div>
     </main>
 
-    <script src="./game.js?v=sun-release-20260504-hometown-safe-bg-only"></script>
+    <script src="./game.js?v=sun-release-20260504-hometown-actor-layer-dom"></script>
   </body>
 </html>

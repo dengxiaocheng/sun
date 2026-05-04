@@ -151,6 +151,37 @@ const hasFixTitleStyle = /#titleScreen\s*\{[\s\S]*?assets\/images\/backgrounds\/
 const noTitleBlendMultiply = !/background-blend-mode:\s*multiply/.test(files.css);
 
 const hasIds = (target, ids) => ids.every((id) => new RegExp(`id=["']${id}["']`).test(target));
+const extractCssNumber = (css, selector, propertyName) => {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const selectorBlock = new RegExp(`${escaped}\\s*\\{([\\s\\S]*?)\\}`).exec(css);
+  if (!selectorBlock) {
+    return null;
+  }
+  const match = new RegExp(`${propertyName}\\s*:\\s*(\\d+)`).exec(selectorBlock[1]);
+  return match ? Number(match[1]) : null;
+};
+const actorLayerZ = extractCssNumber(files.css, '#actorLayer', 'z-index');
+const actorSpriteLayerZ = extractCssNumber(files.css, '#actorSprite', 'z-index');
+const hudZ = extractCssNumber(files.css, '#hud', 'z-index');
+const dialogWrapperZ = extractCssNumber(files.css, '#dialogWrapper', 'z-index');
+const choiceAreaZ = extractCssNumber(files.css, '#choiceArea', 'z-index');
+const tripPackPanelZ = extractCssNumber(files.css, '.tripPackPanel', 'z-index');
+const hasActorLayerIds = hasIds(files.html, ['actorLayer', 'actorSprite']);
+const hasActorLayerStyle = /#actorLayer\s*[\s\S]*?pointer-events:\s*none/.test(files.css) && /#actorSprite\s*[\s\S]*?aspect-ratio:\s*96\s*\/\s*160/.test(files.css);
+const hasActorLayerInRender = /function updateActorLayer\(activeScene\)/.test(files.js);
+const hasActorLayerRenderBinding = /const hasActorLayer = updateActorLayer\(activeScene\);/.test(files.js);
+const hasActorLayerUseSpriteSheetCss = /actorSpriteSheet/.test(files.css);
+const hasActorRemapDisabledForCharacters = !/fix_patch\/.*char/.test(files.js) && !/characters_transparent/.test(files.js);
+const hasOriginalCharacterPrimaryPath = /resolveImagePath\(activeScene\.actor,\s*state\.current\)/.test(files.js);
+const hasMobileStartActorLayer = /#actorLayer\.hidden/.test(files.css);
+const hasMobileActorLayerZOrder = Boolean(
+  Number.isFinite(actorLayerZ) && Number.isFinite(hudZ)
+    && Number.isFinite(dialogWrapperZ)
+    && Number.isFinite(choiceAreaZ)
+    && actorLayerZ < hudZ
+    && actorLayerZ < dialogWrapperZ
+    && actorLayerZ < choiceAreaZ,
+);
 
 const publicHtml = await (async () => {
   try {
@@ -339,6 +370,26 @@ const checks = [
   { name: '发布页不再有 portraitLock 关键字', pass: !/portraitLock/.test(publicHtml) && !/portraitLock/.test(files.css) },
   { name: 'release.version 与 index/query 一致', pass: releaseVersionFromFile && htmlCacheVersion === releaseVersionFromFile },
   { name: 'release.version 与 README 一致', pass: releaseVersionFromFile && readmeCacheVersion === releaseVersionFromFile },
+  {
+    name: 'DOM 角色层存在且带可见样式（#actorLayer/#actorSprite）',
+    pass: hasActorLayerIds && hasActorLayerStyle && hasMobileStartActorLayer,
+  },
+  {
+    name: '角色层 z-index 在 HUD/dialog/choice 之后（角色在下方）',
+    pass: hasMobileActorLayerZOrder,
+  },
+  {
+    name: '角色层更新源于当前场景 actor 且经过 render 调用',
+    pass: hasActorLayerInRender && hasActorLayerRenderBinding && hasOriginalCharacterPrimaryPath,
+  },
+  {
+    name: '角色路径不走 fix_patch 透明角色 remap',
+    pass: hasActorRemapDisabledForCharacters,
+  },
+  {
+    name: '角色 sprite-sheet 使用 4 帧裁切策略（400%+背景偏移）',
+    pass: hasActorLayerUseSpriteSheetCss,
+  },
   { name: '资源映射配置存在', pass: !!remapBlockMatch && !!hometownRemapBlockMatch },
   { name: '图片候选链使用场景参数（非全局硬编码 remap）', pass: hasResolveImageMapPath },
   { name: 'ASSET_REMAP 键为允许列表（仅目标安全背景）', pass: remapMapHasRequiredKeys },
