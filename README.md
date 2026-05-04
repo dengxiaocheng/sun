@@ -32,10 +32,10 @@
 
 当前发布版本使用缓存失效参数：
 
-- `style.css?v=sun-release-20260504-hometown-fixpatch-asset-map-fallback`
-- `game.js?v=sun-release-20260504-hometown-fixpatch-asset-map-fallback`
+- `style.css?v=sun-release-20260504-hometown-safe-bg-only`
+- `game.js?v=sun-release-20260504-hometown-safe-bg-only`
 
-- 说明：`game.js` 已新增资源路径重映射层（`ASSET_REMAP`），在不改动旧资源路径标识符的情况下，将角色/背景/CG 映射至 `assets/images/fix_patch/*` 中的最新整改包文件；标题页背景在 `style.css` 直接使用 `bg_china_university_library_winter.png`。
+- 说明：`game.js` 的重映射已回退为：以原始资源为默认主路径，`ASSET_REMAP` 仅作为可复用映射定义，不做全局 fallback；仅在 `H00`-`H08` 场景白名单内按场景选择性覆盖背景，并保留 `titleScreen` 的原图优先背景（`bg_title_powerline_mist.png`），未提供可用修复图时回退原图。
 
 七个状态统一展示为中文进度条：焦虑雾、动能、复习进度、恢复、边界感、关系温度、理解/共情。
 7 条进度条为同一套状态区，显示标签与实时百分比；选择后受影响条目会立即高亮并显示 +N/-N 提示。

@@ -1570,57 +1570,11 @@
   let pressTimer;
 
   const ASSET_REMAP = {
-    // Transparent characters from the整改包（失效时回退到原始路径）
-    'characters/char_smx_daily_sheet.png': {
-      remap: 'fix_patch/characters_transparent/char_smx_daily_sheet.png',
-      fallback: 'characters/char_smx_daily_sheet.png',
+    // Hometown + title safe set only.
+    'backgrounds/bg_title_powerline_mist.png': {
+      remap: 'fix_patch/backgrounds_china_kaoyan/bg_china_university_library_winter.png',
+      fallback: 'backgrounds/bg_title_powerline_mist.png',
     },
-    'characters/char_smx_pinkcoat_sheet.png': {
-      remap: 'fix_patch/characters_transparent/char_smx_pinkcoat_sheet.png',
-      fallback: 'characters/char_smx_pinkcoat_sheet.png',
-    },
-    'characters/char_smx_study_sheet.png': {
-      remap: 'fix_patch/characters_transparent/char_smx_study_sheet.png',
-      fallback: 'characters/char_smx_study_sheet.png',
-    },
-    'characters/char_smx_exam_sheet.png': {
-      remap: 'fix_patch/characters_transparent/char_smx_exam_sheet.png',
-      fallback: 'characters/char_smx_exam_sheet.png',
-    },
-    'characters/char_dxc_daily_sheet.png': {
-      remap: 'fix_patch/characters_transparent/char_dxc_daily_sheet.png',
-      fallback: 'characters/char_dxc_daily_sheet.png',
-    },
-    'characters/char_dxc_studio_sheet.png': {
-      remap: 'fix_patch/characters_transparent/char_dxc_studio_sheet.png',
-      fallback: 'characters/char_dxc_studio_sheet.png',
-    },
-    'characters/char_dxc_tender_sheet.png': {
-      remap: 'fix_patch/characters_transparent/char_dxc_tender_sheet.png',
-      fallback: 'characters/char_dxc_tender_sheet.png',
-    },
-    'characters/char_linzhi_sheet.png': {
-      remap: 'fix_patch/characters_transparent/char_linzhi_sheet.png',
-      fallback: 'characters/char_linzhi_sheet.png',
-    },
-    'characters/char_tangchu_sheet.png': {
-      remap: 'fix_patch/characters_transparent/char_tangchu_sheet.png',
-      fallback: 'characters/char_tangchu_sheet.png',
-    },
-    'characters/char_counselor_sheet.png': {
-      remap: 'fix_patch/characters_transparent/char_counselor_sheet.png',
-      fallback: 'characters/char_counselor_sheet.png',
-    },
-    'characters/char_unknown_crowd_sheet.png': {
-      remap: 'fix_patch/characters_transparent/char_unknown_crowd_sheet.png',
-      fallback: 'characters/char_unknown_crowd_sheet.png',
-    },
-    'characters/char_mother_avatar.png': {
-      remap: 'fix_patch/characters_transparent/char_mother_avatar.png',
-      fallback: 'characters/char_mother_avatar.png',
-    },
-
-    // Hometown/mainline backgrounds remapped to 中国考研整改包（失效时回退到原始路径）
     'backgrounds/bg_dorm_0230.png': {
       remap: 'fix_patch/backgrounds_china_kaoyan/bg_rental_room_night.png',
       fallback: 'backgrounds/bg_dorm_0230.png',
@@ -1629,99 +1583,78 @@
       remap: 'fix_patch/backgrounds_china_kaoyan/bg_campus_lake_evening.png',
       fallback: 'backgrounds/bg_campus_morning_fog.png',
     },
-    'backgrounds/bg_library_stack.png': {
-      remap: 'fix_patch/backgrounds_china_kaoyan/bg_kaoyan_selfstudy_hall.png',
-      fallback: 'backgrounds/bg_library_stack.png',
-    },
-    'backgrounds/bg_selfstudy_room_cold.png': {
-      remap: 'fix_patch/backgrounds_china_kaoyan/bg_kaoyan_selfstudy_hall.png',
-      fallback: 'backgrounds/bg_selfstudy_room_cold.png',
-    },
-    'backgrounds/bg_cafeteria_grey_noon.png': {
-      remap: 'fix_patch/backgrounds_china_kaoyan/bg_offcampus_teashop.png',
-      fallback: 'backgrounds/bg_cafeteria_grey_noon.png',
-    },
-    'backgrounds/bg_bus_stop_rain.png': {
-      remap: 'fix_patch/backgrounds_china_kaoyan/bg_train_station_platform_winter.png',
-      fallback: 'backgrounds/bg_bus_stop_rain.png',
-    },
-    'backgrounds/bg_deng_studio_chapel.png': {
-      remap: 'fix_patch/backgrounds_china_kaoyan/bg_translation_lab.png',
-      fallback: 'backgrounds/bg_deng_studio_chapel.png',
-    },
-    'backgrounds/bg_mock_exam_room.png': {
-      remap: 'fix_patch/backgrounds_china_kaoyan/bg_postgrad_registration_office.png',
-      fallback: 'backgrounds/bg_mock_exam_room.png',
-    },
     'backgrounds/bg_rooftop_evening.png': {
       remap: 'fix_patch/backgrounds_china_kaoyan/bg_subway_home.png',
       fallback: 'backgrounds/bg_rooftop_evening.png',
-    },
-    'backgrounds/bg_counseling_corridor.png': {
-      remap: 'fix_patch/backgrounds_china_kaoyan/bg_translation_lab.png',
-      fallback: 'backgrounds/bg_counseling_corridor.png',
     },
     'backgrounds/bg_exam_gate_dawn.png': {
       remap: 'fix_patch/backgrounds_china_kaoyan/bg_kaoyan_exam_gate_china.png',
       fallback: 'backgrounds/bg_exam_gate_dawn.png',
     },
-    'backgrounds/bg_title_powerline_mist.png': {
-      remap: 'fix_patch/backgrounds_china_kaoyan/bg_china_university_library_winter.png',
-      fallback: 'backgrounds/bg_title_powerline_mist.png',
+    'backgrounds/bg_library_stack.png': {
+      remap: 'fix_patch/backgrounds_china_kaoyan/bg_kaoyan_selfstudy_hall.png',
+      fallback: 'backgrounds/bg_library_stack.png',
     },
-
-    // CG 映射：优先使用最新考研修正版替代旧语境CG；失败时回退
-    'cg/cg_powerline_couple.png': {
-      remap: 'fix_patch/cg_china_kaoyan/cg_bus_stop_argument.png',
-      fallback: 'cg/cg_powerline_couple.png',
-    },
-    'cg/cg_translation_note.png': {
-      remap: 'fix_patch/cg_china_kaoyan/cg_consultation_breathing.png',
-      fallback: 'cg/cg_translation_note.png',
-    },
-    'cg/cg_dxc_electronic_liturgy.png': {
-      remap: 'fix_patch/cg_china_kaoyan/cg_kaoyan_admission_ticket.png',
-      fallback: 'cg/cg_dxc_electronic_liturgy.png',
-    },
-    'cg/cg_smx_toilet_panic.png': {
-      remap: 'fix_patch/cg_china_kaoyan/cg_first_freelance_payment.png',
-      fallback: 'cg/cg_smx_toilet_panic.png',
-    },
-    'cg/cg_exam_morning_hands.png': {
-      remap: 'fix_patch/cg_china_kaoyan/cg_consultation_breathing.png',
-      fallback: 'cg/cg_exam_morning_hands.png',
-    },
-    'cg/cg_ending_new_page.png': {
-      remap: 'fix_patch/cg_china_kaoyan/cg_first_freelance_payment.png',
-      fallback: 'cg/cg_ending_new_page.png',
-    },
-    'cg/cg_ending_low_prayer.png': {
-      remap: 'fix_patch/cg_china_kaoyan/cg_consultation_breathing.png',
-      fallback: 'cg/cg_ending_low_prayer.png',
-    },
-    'cg/cg_ending_foglamp.png': {
-      remap: 'fix_patch/cg_china_kaoyan/cg_kaoyan_admission_ticket.png',
-      fallback: 'cg/cg_ending_foglamp.png',
-    },
-    'cg/cg_ending_poweroff.png': {
-      remap: 'fix_patch/cg_china_kaoyan/cg_reserved_blank_slot.png',
-      fallback: 'cg/cg_ending_poweroff.png',
-    },
-    'cg/cg_ending_march_loop.png': {
-      remap: 'fix_patch/cg_china_kaoyan/cg_bus_stop_argument.png',
-      fallback: 'cg/cg_ending_march_loop.png',
+    'backgrounds/bg_bus_stop_rain.png': {
+      remap: 'fix_patch/backgrounds_china_kaoyan/bg_train_station_platform_winter.png',
+      fallback: 'backgrounds/bg_bus_stop_rain.png',
     },
   };
 
-  const HOMETOWN_REMAP_PATHS = Object.values(ASSET_REMAP).map((entry) => entry.remap);
+  const HOMETOWN_SCENE_REMAP = {
+    H00: {
+      'backgrounds/bg_dorm_0230.png': ASSET_REMAP['backgrounds/bg_dorm_0230.png'],
+    },
+    H01: {
+      'backgrounds/bg_campus_morning_fog.png': ASSET_REMAP['backgrounds/bg_campus_morning_fog.png'],
+    },
+    H02: {
+      'backgrounds/bg_title_powerline_mist.png': ASSET_REMAP['backgrounds/bg_title_powerline_mist.png'],
+    },
+    H03: {
+      'backgrounds/bg_rooftop_evening.png': ASSET_REMAP['backgrounds/bg_rooftop_evening.png'],
+    },
+    H04: {
+      'backgrounds/bg_title_powerline_mist.png': ASSET_REMAP['backgrounds/bg_title_powerline_mist.png'],
+    },
+    H05: {
+      'backgrounds/bg_exam_gate_dawn.png': ASSET_REMAP['backgrounds/bg_exam_gate_dawn.png'],
+    },
+    H06: {
+      'backgrounds/bg_library_stack.png': ASSET_REMAP['backgrounds/bg_library_stack.png'],
+    },
+    H07: {
+      'backgrounds/bg_rooftop_evening.png': ASSET_REMAP['backgrounds/bg_rooftop_evening.png'],
+    },
+    H08: {
+      'backgrounds/bg_bus_stop_rain.png': ASSET_REMAP['backgrounds/bg_bus_stop_rain.png'],
+    },
+  };
+
+  const HOMETOWN_REMAP_PATHS = (() => {
+    const paths = [];
+    Object.values(HOMETOWN_SCENE_REMAP).forEach((sceneMap) => {
+      Object.values(sceneMap).forEach((entry) => {
+        if (entry?.remap) {
+          paths.push(entry.remap);
+        }
+      });
+    });
+    return paths;
+  })();
 
   function stripImagePrefix(path) {
     return String(path).replace(/^assets\/images\//, '');
   }
 
-  function getAssetCandidates(path) {
+  function getSceneRemap(sceneId, logicalPath) {
+    const sceneMap = HOMETOWN_SCENE_REMAP[sceneId || ''];
+    return sceneMap?.[logicalPath] || null;
+  }
+
+  function getAssetCandidates(path, sceneId = null) {
     const originalPath = stripImagePrefix(path);
-    const remapConfig = ASSET_REMAP[originalPath];
+    const sceneRemap = getSceneRemap(sceneId, originalPath);
     const candidates = [];
     const pushPath = (item) => {
       const value = stripImagePrefix(item);
@@ -1731,11 +1664,17 @@
       }
     };
 
-    if (remapConfig) {
-      pushPath(remapConfig.remap);
-      pushPath(remapConfig.fallback || originalPath);
-    } else {
-      pushPath(originalPath);
+    pushPath(originalPath);
+
+    if (sceneRemap) {
+      pushPath(sceneRemap.remap);
+      pushPath(sceneRemap.fallback || originalPath);
+      return {
+        original: originalPath,
+        candidates: candidates.map((item) => `assets/images/${item}`),
+        mapped: candidates[0],
+        fallback: candidates[1] || candidates[0],
+      };
     }
 
     return {
@@ -1746,8 +1685,8 @@
     };
   }
 
-  function resolveImagePath(path) {
-    return getAssetCandidates(path).candidates[0];
+  function resolveImagePath(path, sceneId = null) {
+    return getAssetCandidates(path, sceneId).candidates[0];
   }
 
   function loadImageUrl(url) {
@@ -1778,9 +1717,9 @@
     return entry.promise;
   }
 
-  function resolveImageLoadState(logicalPath) {
+  function resolveImageLoadState(logicalPath, sceneId = null) {
     const logical = stripImagePrefix(logicalPath);
-    const candidates = getAssetCandidates(logical).candidates;
+    const candidates = getAssetCandidates(logical, sceneId).candidates;
     for (const candidate of candidates) {
       const state = imageCache[candidate];
       if (state && state.status === 'ready' && state.img) {
@@ -1813,7 +1752,7 @@
     titleScreen.style.pointerEvents = 'none';
   }
 
-  function loadImage(path) {
+  function loadImage(path, sceneId = null) {
     const logical = stripImagePrefix(path);
     const cache = imageLoadCache[logical];
     if (cache?.status === 'ready' || cache?.status === 'error') {
@@ -1823,7 +1762,7 @@
       return cache.promise;
     }
 
-    const candidates = getAssetCandidates(logical).candidates;
+    const candidates = getAssetCandidates(logical, sceneId).candidates;
     const entry = { status: 'loading', img: null, promise: null, selectedSrc: null };
     entry.promise = (async () => {
       for (const src of candidates) {
@@ -2276,8 +2215,8 @@
 
     ctx.clearRect(0, 0, BASE_W, BASE_H);
 
-    const bgPath = resolveImagePath(activeScene.bg);
-    const bgCache = resolveImageLoadState(activeScene.bg) || imageCache[bgPath];
+    const bgPath = resolveImagePath(activeScene.bg, state.current);
+    const bgCache = resolveImageLoadState(activeScene.bg, state.current) || imageCache[bgPath];
     if (bgCache && bgCache.status === 'ready' && bgCache.img) {
       ctx.drawImage(bgCache.img, 0, 0, BASE_W, BASE_H);
     } else {
@@ -2285,8 +2224,8 @@
       ctx.fillRect(0, 0, BASE_W, BASE_H);
     }
 
-    const actorPath = activeScene.actor ? resolveImagePath(activeScene.actor) : null;
-    const actorCache = actorPath ? resolveImageLoadState(activeScene.actor) || imageCache[actorPath] : null;
+    const actorPath = activeScene.actor ? resolveImagePath(activeScene.actor, state.current) : null;
+    const actorCache = actorPath ? resolveImageLoadState(activeScene.actor, state.current) || imageCache[actorPath] : null;
     if (actorCache && actorCache.status === 'ready' && actorCache.img) {
       const sw = 96;
       const sh = 160;
@@ -2349,11 +2288,15 @@
   function preloadScene(id) {
     const scene = scenes[id];
     if (!scene) return Promise.resolve();
-    const list = [scene.bg];
-    if (scene.actor) list.push(scene.actor);
-    list.push('fx/fx_fog_overlay_sheet.png');
-    list.push('fx/fx_rain_sheet.png');
-    list.push('fx/fx_crt_noise_sheet.png');
+    const list = new Set();
+    getAssetCandidates(scene.bg, id).candidates.forEach((path) => list.add(path));
+    if (scene.actor) {
+      getAssetCandidates(scene.actor, id).candidates.forEach((path) => list.add(path));
+    }
+
+    list.add('assets/images/fx/fx_fog_overlay_sheet.png');
+    list.add('assets/images/fx/fx_rain_sheet.png');
+    list.add('assets/images/fx/fx_crt_noise_sheet.png');
 
     if (scene.end) {
       const ending = getEnding();
@@ -2362,7 +2305,7 @@
       }
     }
 
-    return Promise.all(list.map(loadImage));
+    return Promise.all(Array.from(list).map((path) => loadImage(path, id)));
   }
 
   function preloadAll() {

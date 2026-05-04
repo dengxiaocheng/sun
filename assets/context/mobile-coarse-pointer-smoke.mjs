@@ -10,46 +10,78 @@ const files = {
   css: fs.readFileSync(`${repoRoot}/style.css`, 'utf8'),
   readme: fs.readFileSync(`${repoRoot}/README.md`, 'utf8'),
 };
+const scenesBlockMatch = files.js.match(/const scenes = \\{([\\s\\S]*?)\\n\\s*const ENDINGS = /);
+const scenesBlock = scenesBlockMatch ? scenesBlockMatch[1] : files.js;
 
-const REQUIRED_ASSET_REMAP_KEYS = [
-  'characters/char_smx_exam_sheet.png',
+const SAFE_ASSET_REMAP_KEYS = [
   'backgrounds/bg_title_powerline_mist.png',
-  'cg/cg_powerline_couple.png',
+  'backgrounds/bg_dorm_0230.png',
+  'backgrounds/bg_campus_morning_fog.png',
+  'backgrounds/bg_rooftop_evening.png',
+  'backgrounds/bg_exam_gate_dawn.png',
+  'backgrounds/bg_library_stack.png',
+  'backgrounds/bg_bus_stop_rain.png',
 ];
 
 const REQUIRED_MAPPED_ASSET_FILES = [
-  'assets/images/fix_patch/characters_transparent/char_smx_exam_sheet.png',
   'assets/images/fix_patch/backgrounds_china_kaoyan/bg_rental_room_night.png',
   'assets/images/fix_patch/backgrounds_china_kaoyan/bg_china_university_library_winter.png',
-  'assets/images/fix_patch/cg_china_kaoyan/cg_first_freelance_payment.png',
-  'assets/images/fix_patch/cg_china_kaoyan/cg_consultation_breathing.png',
-  'assets/images/fix_patch/cg_china_kaoyan/cg_bus_stop_argument.png',
+  'assets/images/fix_patch/backgrounds_china_kaoyan/bg_campus_lake_evening.png',
+  'assets/images/fix_patch/backgrounds_china_kaoyan/bg_subway_home.png',
+  'assets/images/fix_patch/backgrounds_china_kaoyan/bg_kaoyan_exam_gate_china.png',
+  'assets/images/fix_patch/backgrounds_china_kaoyan/bg_kaoyan_selfstudy_hall.png',
+  'assets/images/fix_patch/backgrounds_china_kaoyan/bg_train_station_platform_winter.png',
 ];
 
-const remapBlockMatch = files.js.match(/const ASSET_REMAP = \{([\s\S]*?)\n\s*const HOMETOWN_REMAP_PATHS =/);
+const remapBlockMatch = files.js.match(/const ASSET_REMAP = \{([\s\S]*?)\n\s*const HOMETOWN_SCENE_REMAP = /);
+const hometownRemapBlockMatch = files.js.match(/const HOMETOWN_SCENE_REMAP = \{([\s\S]*?)\n\s*const HOMETOWN_REMAP_PATHS =/);
 const ASSET_REMAP_ENTRIES = remapBlockMatch
   ? Array.from(remapBlockMatch[1].matchAll(/'([^']+)': \{\s*remap:\s*'([^']+)'\s*,\s*fallback:\s*'([^']+)'/g))
   : [];
 const ASSET_REMAP_MAP = Object.fromEntries(ASSET_REMAP_ENTRIES.map((entry) => [entry[1], { remap: entry[2], fallback: entry[3] }]));
 
-const getAssetCandidates = (logicalPath) => {
-  const entry = ASSET_REMAP_MAP[logicalPath];
-  if (!entry) return [logicalPath];
+const stripImagePrefix = (logicalPath) => String(logicalPath || '').replace(/^assets\/images\//, '');
+const HOMETOWN_SCENE_REMAP_MAP = (() => {
+  if (!hometownRemapBlockMatch) {
+    return {};
+  }
+
+  const sceneMap = {};
+  const sceneEntries = Array.from(hometownRemapBlockMatch[1].matchAll(/\b(H\d{2}):\s*\{([\s\S]*?)\n\s*\},/g));
+  for (const [, sceneId, innerBlock] of sceneEntries) {
+    const sceneMapEntries = Array.from(innerBlock.matchAll(/'([^']+)':\s*ASSET_REMAP\['([^']+)'\]/g));
+    const pathMap = {};
+    for (const [, scenePath, remapKey] of sceneMapEntries) {
+      if (ASSET_REMAP_MAP[remapKey]) {
+        pathMap[scenePath] = ASSET_REMAP_MAP[remapKey];
+      }
+    }
+    sceneMap[sceneId] = pathMap;
+  }
+  return sceneMap;
+})();
+
+const getAssetCandidates = (logicalPath, sceneId = null) => {
+  const originalPath = stripImagePrefix(logicalPath);
+  const sceneRemap = (HOMETOWN_SCENE_REMAP_MAP[sceneId || ''] || {})[originalPath];
   const candidates = [];
   const add = (item) => {
     if (!item) return;
-    if (!candidates.includes(item)) {
-      candidates.push(item);
+    const normalized = stripImagePrefix(item);
+    if (!candidates.includes(normalized)) {
+      candidates.push(normalized);
     }
   };
-  add(entry.remap);
-  add(entry.fallback);
-  add(logicalPath);
+  add(originalPath);
+  if (sceneRemap?.remap) {
+    add(sceneRemap.remap);
+    add(sceneRemap.fallback || originalPath);
+  }
   return candidates;
 };
 
 const getSceneBg = (sceneId) => {
-  const sceneMatch = new RegExp(`\\b${sceneId}:\\s*\\{[\\s\\S]*?\\n\\s*bg:\\s*'([^']+)'`).exec(files.js);
+  const sceneMatch = new RegExp(`\\b${sceneId}:\\s*\\{[\\s\\S]*?\\n\\s*bg:\\s*'([^']+)'`).exec(scenesBlock);
   return sceneMatch?.[1] || '';
 };
 
@@ -57,33 +89,66 @@ const hasPathOnDisk = (path) => fs.existsSync(`${repoRoot}/${path}`);
 
 const HOMETOWN_SCENE_IDS = ['H00', 'H01', 'H02', 'H03', 'H04', 'H05', 'H06', 'H07', 'H08'];
 const hasAllHometownNodes = HOMETOWN_SCENE_IDS.every((nodeId) => new RegExp(`\\b${nodeId}:`).test(files.js));
+const hometwonSceneRemapKeys = Object.keys(HOMETOWN_SCENE_REMAP_MAP);
+const hasExactHometownSceneMap = HOMETOWN_SCENE_IDS.every((sceneId) => hometwonSceneRemapKeys.includes(sceneId))
+  && hometwonSceneRemapKeys.length === HOMETOWN_SCENE_IDS.length;
 
 const hometownRemapCoverage = /const HOMETOWN_REMAP_PATHS\s*=/;
 const requiredHometownRemapDirs = [
-  'assets/images/fix_patch/characters_transparent',
   'assets/images/fix_patch/backgrounds_china_kaoyan',
-  'assets/images/fix_patch/cg_china_kaoyan',
 ];
 
-const remapMapHasRequiredKeys = REQUIRED_ASSET_REMAP_KEYS.every((key) => ASSET_REMAP_MAP[key]);
-const remapAllHaveFallback = ASSET_REMAP_ENTRIES.every((entry) => Boolean(entry[3]));
-const remapAssetsExist = ASSET_REMAP_ENTRIES.every((entry) => {
-  const remappedPath = `assets/images/${entry[2]}`;
-  const fallbackPath = `assets/images/${entry[3]}`;
+const getSceneAssetCandidates = (sceneId, logicalPath) => {
+  const candidates = getAssetCandidates(logicalPath, sceneId);
+  return candidates.map((path) => `assets/images/${stripImagePrefix(path)}`);
+};
+
+const remapMapHasRequiredKeys = SAFE_ASSET_REMAP_KEYS.every((key) => ASSET_REMAP_MAP[key]);
+const remapAllHaveFallback = ASSET_REMAP_ENTRIES.every((entry) => Boolean(entry[2]) && Boolean(entry[3]));
+const remapAssetsExist = SAFE_ASSET_REMAP_KEYS.every((logicalPath) => {
+  const remapConfig = ASSET_REMAP_MAP[logicalPath];
+  if (!remapConfig) {
+    return false;
+  }
+  const remappedPath = `assets/images/${remapConfig.remap}`;
+  const fallbackPath = `assets/images/${(remapConfig.fallback || logicalPath)}`;
   return hasPathOnDisk(remappedPath) && hasPathOnDisk(fallbackPath);
 });
+const hasNoCharacterOrCgRemap = SAFE_ASSET_REMAP_KEYS.every((key) => !key.startsWith('characters/') && !key.startsWith('cg/'));
 
-const p00Bg = getSceneBg('P00');
-const h00Bg = getSceneBg('H00');
-const p00SceneCandidates = p00Bg ? getAssetCandidates(p00Bg).map((path) => `assets/images/${path}`) : [];
-const h00SceneCandidates = h00Bg ? getAssetCandidates(h00Bg).map((path) => `assets/images/${path}`) : [];
-const keySceneCandidates = getAssetCandidates('backgrounds/bg_title_powerline_mist.png').map((path) => `assets/images/${path}`);
+const p00SceneCandidates = getSceneAssetCandidates('P00', getSceneBg('P00'));
+const p01SceneCandidates = getSceneAssetCandidates('P01', getSceneBg('P01'));
+const h00SceneCandidates = getSceneAssetCandidates('H00', getSceneBg('H00'));
+const keySceneCandidates = getSceneAssetCandidates(null, 'backgrounds/bg_title_powerline_mist.png');
+const hasMainlineOriginalFirstInP00 = p00SceneCandidates[0] === `assets/images/${stripImagePrefix(getSceneBg('P00'))}`;
+const hasMainlineOriginalFirstInP01 = p01SceneCandidates[0] === `assets/images/${stripImagePrefix(getSceneBg('P01'))}`;
 const sceneCandidatesExist = (items) => items.length > 0 && items.every(hasPathOnDisk);
+
+const mapSceneKeysForHometown = HOMETOWN_SCENE_IDS.flatMap((sceneId) => {
+  const bg = getSceneBg(sceneId);
+  if (!bg) {
+    return [];
+  }
+  const sceneMap = HOMETOWN_SCENE_REMAP_MAP[sceneId] || {};
+  return Object.keys(sceneMap).filter(Boolean).map((path) => ({ sceneId, path }));
+});
+
+const hometownRemapOnlyFromAllowlist = (() => {
+  const uniquePaths = new Set(mapSceneKeysForHometown.map(({ path }) => path));
+  return Array.from(uniquePaths).every((path) => SAFE_ASSET_REMAP_KEYS.includes(path))
+    && uniquePaths.size <= SAFE_ASSET_REMAP_KEYS.length;
+})();
+const h00UsesScopedFixPatch = Object.keys(HOMETOWN_SCENE_REMAP_MAP['H00'] || {}).length > 0;
+const hasNoBlanketFixPatchInP00P01 = !p00SceneCandidates.some((path) => path.includes('assets/images/fix_patch/'))
+  && !p01SceneCandidates.some((path) => path.includes('assets/images/fix_patch/'));
 
 const fixPatchDirectoriesExist = requiredHometownRemapDirs.every((dir) => fs.existsSync(`${repoRoot}/${dir}`));
 const requiredRemapFilesExist = REQUIRED_MAPPED_ASSET_FILES.every((assetPath) => hasPathOnDisk(assetPath));
-const hasResolveImageMapPath = /function getAssetCandidates\(path\)|function resolveImagePath\(path\)/.test(files.js);
-const hasFixTitleStyle = /assets\/images\/fix_patch\/backgrounds_china_kaoyan\/bg_china_university_library_winter\.png/.test(files.css);
+const hasResolveImageMapPath = /function getAssetCandidates\(path,\s*sceneId\s*=\s*null\)|function resolveImagePath\(path,\s*sceneId\s*=\s*null\)/.test(files.js)
+  && /function loadImage\(path,\s*sceneId\s*=\s*null\)/.test(files.js)
+  && /function resolveImageLoadState\(logicalPath,\s*sceneId\s*=\s*null\)/.test(files.js);
+const hasFixTitleStyle = /#titleScreen\s*\{[\s\S]*?assets\/images\/backgrounds\/bg_title_powerline_mist\.png[\s\S]*?assets\/images\/fix_patch\/backgrounds_china_kaoyan\/bg_china_university_library_winter\.png/.test(files.css);
+const noTitleBlendMultiply = !/background-blend-mode:\s*multiply/.test(files.css);
 
 const hasIds = (target, ids) => ids.every((id) => new RegExp(`id=["']${id}["']`).test(target));
 
@@ -274,18 +339,25 @@ const checks = [
   { name: '发布页不再有 portraitLock 关键字', pass: !/portraitLock/.test(publicHtml) && !/portraitLock/.test(files.css) },
   { name: 'release.version 与 index/query 一致', pass: releaseVersionFromFile && htmlCacheVersion === releaseVersionFromFile },
   { name: 'release.version 与 README 一致', pass: releaseVersionFromFile && readmeCacheVersion === releaseVersionFromFile },
-  { name: '资源映射配置存在', pass: !!remapBlockMatch },
-  { name: 'resolveImagePath 使用修复资源统一前缀', pass: hasResolveImageMapPath },
-  { name: 'ASSET_REMAP 包含 remap 与 fallback 字段', pass: remapAllHaveFallback },
-  { name: 'ASSET_REMAP 覆盖关键映射键', pass: remapMapHasRequiredKeys },
+  { name: '资源映射配置存在', pass: !!remapBlockMatch && !!hometownRemapBlockMatch },
+  { name: '图片候选链使用场景参数（非全局硬编码 remap）', pass: hasResolveImageMapPath },
+  { name: 'ASSET_REMAP 键为允许列表（仅目标安全背景）', pass: remapMapHasRequiredKeys },
+  { name: 'ASSET_REMAP 全部键位含 remap/fallback', pass: remapAllHaveFallback },
+  { name: '角色/CG 映射被禁用', pass: hasNoCharacterOrCgRemap },
   { name: 'ASSET_REMAP remap/fallback 对应资源在本地', pass: remapAssetsExist },
   { name: 'Hometown 映射路径变量存在', pass: hometownRemapCoverage.test(files.js) },
+  { name: 'Hometown 映射仅由 H00-H08 白名单定义', pass: hasExactHometownSceneMap },
+  { name: 'Hometown 映射仅覆盖允许的背景键', pass: hometownRemapOnlyFromAllowlist },
   { name: '修复资源目录存在', pass: fixPatchDirectoriesExist },
   { name: '关键修复资源存在', pass: requiredRemapFilesExist },
-  { name: 'Title 场景 remap/fallback 资源在本地', pass: sceneCandidatesExist(keySceneCandidates) },
-  { name: 'P00 场景 remap/fallback 资源在本地', pass: sceneCandidatesExist(p00SceneCandidates) },
-  { name: 'H00 场景 remap/fallback 资源在本地', pass: sceneCandidatesExist(h00SceneCandidates) },
-  { name: '修复资源样式替换至标题背景', pass: hasFixTitleStyle },
+  { name: 'Title 场景背景候选链素材在本地', pass: sceneCandidatesExist(keySceneCandidates) },
+  { name: 'P00 场景候选链素材在本地', pass: sceneCandidatesExist(p00SceneCandidates) },
+  { name: 'H00 场景候选链素材在本地', pass: sceneCandidatesExist(h00SceneCandidates) },
+  { name: '标题背景优先使用原图，并提供原图 fallback', pass: hasFixTitleStyle },
+  { name: '标题背景不使用背景叠加变暗策略', pass: noTitleBlendMultiply },
+  { name: 'P00/P01 主线场景保留原始主图作为第一候选', pass: hasMainlineOriginalFirstInP00 && hasMainlineOriginalFirstInP01 },
+  { name: '主线 P00/P01 未被全局 fix_patch 覆盖', pass: hasNoBlanketFixPatchInP00P01 },
+  { name: 'H00/Hometown 使用 allowlist 场景映射到 fix_patch', pass: h00UsesScopedFixPatch },
   { name: '家乡分支节点 H00-H08 全量定义', pass: hasAllHometownNodes },
   { name: 'UI 有 7 条同源状态条 DOM', pass: hasSevenBarDom && hasSevenValueDom && hasSevenDeltaDom },
   { name: 'syncBars 统一更新所有 7 条条宽度与 7 条数值文案', pass: syncBarsUpdatesAllBars && syncBarsUpdatesAllValues },
