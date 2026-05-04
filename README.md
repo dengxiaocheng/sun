@@ -32,8 +32,8 @@
 
 当前发布版本使用缓存失效参数：
 
-- `style.css?v=sun-release-20260504-hometown-fixpatch-asset-map`
-- `game.js?v=sun-release-20260504-hometown-fixpatch-asset-map`
+- `style.css?v=sun-release-20260504-hometown-fixpatch-asset-map-fallback`
+- `game.js?v=sun-release-20260504-hometown-fixpatch-asset-map-fallback`
 
 - 说明：`game.js` 已新增资源路径重映射层（`ASSET_REMAP`），在不改动旧资源路径标识符的情况下，将角色/背景/CG 映射至 `assets/images/fix_patch/*` 中的最新整改包文件；标题页背景在 `style.css` 直接使用 `bg_china_university_library_winter.png`。
 
